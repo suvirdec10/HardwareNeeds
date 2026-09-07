@@ -16,11 +16,11 @@ export const ACCENT = "#4c8dff";
 export const ACCENT_STRONG = "#6ba1ff";
 
 export const partMaterials = {
-  chassis: { color: "#1a1c21", metalness: 0.4, roughness: 0.6 },
-  chassisDark: { color: "#101216", metalness: 0.3, roughness: 0.7 },
+  chassis: { color: "#1a1c21", metalness: 0.5, roughness: 0.38, clearcoat: 0.25, clearcoatRoughness: 0.3 },
+  chassisDark: { color: "#101216", metalness: 0.35, roughness: 0.55 },
   pcb: { color: "#0d1f16", metalness: 0.1, roughness: 0.8 },
-  metal: { color: "#8a8f98", metalness: 0.65, roughness: 0.45 },
-  metalDark: { color: "#4c4f57", metalness: 0.6, roughness: 0.5 },
+  metal: { color: "#9297a0", metalness: 0.78, roughness: 0.34, clearcoat: 0.22, clearcoatRoughness: 0.35 },
+  metalDark: { color: "#4c4f57", metalness: 0.7, roughness: 0.38 },
 };
 
 export interface PartProps {
@@ -47,7 +47,7 @@ export function Part({ id, rest, exploded, explode, hovered, onHover, rotation, 
     if (!group.current) return;
     const pos = restV.clone().lerp(explodedV, explode);
     group.current.position.lerp(pos, Math.min(1, delta * 4));
-    targetScale.current = isHovered ? 1.06 : 1;
+    targetScale.current = isHovered ? 1.045 : 1;
     const s = THREE.MathUtils.lerp(group.current.scale.x, targetScale.current, Math.min(1, delta * 8));
     group.current.scale.setScalar(s);
   });
@@ -76,6 +76,8 @@ export function DimMaterial({
   color,
   metalness,
   roughness,
+  clearcoat,
+  clearcoatRoughness,
   hovered,
   emissive,
   emissiveIntensity = 0.5,
@@ -84,18 +86,22 @@ export function DimMaterial({
   color: string;
   metalness: number;
   roughness: number;
+  clearcoat?: number;
+  clearcoatRoughness?: number;
   hovered?: boolean;
   emissive?: string;
   emissiveIntensity?: number;
   dimmed?: boolean;
 }) {
   return (
-    <meshStandardMaterial
+    <meshPhysicalMaterial
       color={color}
       metalness={metalness}
       roughness={roughness}
+      clearcoat={clearcoat ?? 0}
+      clearcoatRoughness={clearcoatRoughness ?? 0.3}
       emissive={hovered ? ACCENT : emissive ?? "#000000"}
-      emissiveIntensity={hovered ? 0.22 : emissive ? emissiveIntensity : 0}
+      emissiveIntensity={hovered ? 0.16 : emissive ? emissiveIntensity : 0}
       transparent
       opacity={dimmed ? 0.55 : 1}
     />
@@ -105,13 +111,13 @@ export function DimMaterial({
 export function Motherboard({ hovered, dimmed }: { hovered: boolean; dimmed: boolean }) {
   return (
     <group>
-      <RoundedBox args={[2.7, 0.05, 2.3]} radius={0.03} smoothness={2}>
+      <RoundedBox args={[2.2, 0.045, 1.9]} radius={0.025} smoothness={2}>
         <DimMaterial {...partMaterials.pcb} hovered={hovered} dimmed={dimmed} />
       </RoundedBox>
       {/* Trace lines */}
-      {[-0.9, -0.5, -0.1, 0.3, 0.7].map((x, i) => (
-        <mesh key={i} position={[x, 0.027, 0.6]}>
-          <boxGeometry args={[0.02, 0.002, 1.1]} />
+      {[-0.74, -0.42, -0.1, 0.24, 0.56].map((x, i) => (
+        <mesh key={i} position={[x, 0.024, 0.48]}>
+          <boxGeometry args={[0.018, 0.002, 0.9]} />
           <meshStandardMaterial
             color={ACCENT}
             emissive={ACCENT}
@@ -122,7 +128,7 @@ export function Motherboard({ hovered, dimmed }: { hovered: boolean; dimmed: boo
         </mesh>
       ))}
       {/* Chipset block */}
-      <RoundedBox args={[0.5, 0.03, 0.5]} radius={0.02} position={[-0.6, 0.045, -0.6]}>
+      <RoundedBox args={[0.42, 0.026, 0.42]} radius={0.018} position={[-0.5, 0.04, -0.48]}>
         <DimMaterial {...partMaterials.metalDark} hovered={hovered} dimmed={dimmed} />
       </RoundedBox>
     </group>
@@ -233,13 +239,13 @@ export function PsuPart({ hovered, dimmed }: { hovered: boolean; dimmed: boolean
 
 export function CaseFrame({ visible, opacity }: { visible: boolean; opacity: number }) {
   const points = React.useMemo(() => {
-    const geo = new THREE.BoxGeometry(3.4, 3.1, 3);
+    const geo = new THREE.BoxGeometry(2.75, 2.55, 2.45);
     return new THREE.EdgesGeometry(geo);
   }, []);
   if (!visible) return null;
   return (
-    <lineSegments geometry={points} position={[0, -0.1, 0]}>
-      <lineBasicMaterial color="#4a4f58" transparent opacity={opacity} />
+    <lineSegments geometry={points} position={[0, -0.15, 0]}>
+      <lineBasicMaterial color="#454a53" transparent opacity={opacity} />
     </lineSegments>
   );
 }

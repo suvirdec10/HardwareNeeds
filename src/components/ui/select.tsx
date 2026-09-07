@@ -31,7 +31,7 @@ export function Select({
       </SelectPrimitive.Trigger>
       <SelectPrimitive.Portal>
         <SelectPrimitive.Content
-          className="z-50 overflow-hidden rounded-md border border-border-strong bg-canvas-raised shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)]"
+          className="z-50 origin-[var(--radix-select-content-transform-origin)] overflow-hidden rounded-md border border-border-strong bg-canvas-raised shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)] data-[state=open]:animate-pop-in"
           position="popper"
           sideOffset={6}
         >

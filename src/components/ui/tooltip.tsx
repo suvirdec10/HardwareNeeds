@@ -35,7 +35,7 @@ export function Tooltip({
           side={side}
           sideOffset={10}
           className={cn(
-            "z-50 max-w-xs rounded-lg border border-border-strong bg-canvas-raised px-3.5 py-3 text-sm text-text shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)] data-[state=delayed-open]:animate-fade-in",
+            "z-50 max-w-xs origin-[var(--radix-tooltip-content-transform-origin)] rounded-lg border border-border-strong bg-canvas-raised px-3.5 py-3 text-sm text-text shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)] data-[state=delayed-open]:animate-pop-in",
             className,
           )}
         >

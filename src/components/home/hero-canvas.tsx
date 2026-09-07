@@ -14,7 +14,13 @@ export function HeroCanvas({
 }) {
   return (
     <SceneCanvas>
-      <HardwareSystem explode={explode} hovered={hovered} onHover={onHover} animateCamera />
+      <HardwareSystem
+        explode={explode}
+        hovered={hovered}
+        onHover={onHover}
+        animateCamera
+        positionOffset={[1.3, 0, 0]}
+      />
     </SceneCanvas>
   );
 }

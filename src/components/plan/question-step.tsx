@@ -88,10 +88,10 @@ export function QuestionStep({
                 }
               }}
               className={cn(
-                "flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-200",
+                "flex items-start gap-3 rounded-lg border p-4 text-left transition-[border-color,background-color,box-shadow,transform]",
                 isSelected
-                  ? "border-accent-border bg-accent-dim"
-                  : "border-border bg-surface hover:border-border-strong hover:bg-surface-2",
+                  ? "border-accent-border bg-accent-dim shadow-[0_0_0_1px_rgba(76,141,255,0.15),0_10px_24px_-14px_rgba(76,141,255,0.5)]"
+                  : "border-border bg-surface hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2",
               )}
             >
               <span
@@ -101,7 +101,7 @@ export function QuestionStep({
                   isSelected ? "border-accent bg-accent" : "border-border-strong",
                 )}
               >
-                {isSelected && <Check className="h-3 w-3 text-[#04070d]" strokeWidth={3} />}
+                {isSelected && <Check className="h-3 w-3 animate-pop-in text-[#04070d]" strokeWidth={3} />}
               </span>
               <span>
                 <span className="block text-[14px] font-medium text-text">{option.label}</span>

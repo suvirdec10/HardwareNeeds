@@ -24,7 +24,7 @@ export function CategorySection({
   variant: "featured" | "compact" | "list";
 }) {
   return (
-    <section id={id} className="scroll-mt-24 border-t border-border py-20 md:py-24">
+    <section id={id} className="scroll-mt-24 divider-fade-top py-20 md:py-24">
       <div className="container-page">
         <div className="max-w-xl">
           <h2 className="text-2xl font-semibold tracking-[-0.01em] text-text sm:text-3xl">{title}</h2>

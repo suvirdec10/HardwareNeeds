@@ -21,7 +21,7 @@ export function Footer() {
   const groups = Array.from(categoriesByGroup().keys());
 
   return (
-    <footer className="border-t border-border">
+    <footer className="divider-fade-top">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_1fr_1fr_1fr] md:py-20">
         <div>
           <Link href="/" className="flex items-center gap-2.5">
@@ -79,7 +79,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-border">
+      <div className="divider-fade-top">
         <div className="container-page flex flex-col items-start justify-between gap-3 py-6 text-xs text-text-faint sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} HardwareNeeds. Product and pricing data shown is sample data for demonstration.</p>
           <p>Built to help you understand hardware — not just buy it.</p>

@@ -31,7 +31,7 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <section className="border-t border-border py-20 md:py-24">
+      <section className="divider-fade-top py-20 md:py-24">
         <div className="container-page">
           <h2 className="text-2xl font-semibold tracking-[-0.01em] text-text">
             What we won&apos;t say
@@ -56,7 +56,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-border py-20 md:py-24">
+      <section className="divider-fade-top py-20 md:py-24">
         <div className="container-page grid gap-12 lg:grid-cols-2">
           <div>
             <h2 className="text-2xl font-semibold tracking-[-0.01em] text-text">
@@ -86,7 +86,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-border py-20 md:py-24">
+      <section className="divider-fade-top py-20 md:py-24">
         <div className="container-page flex flex-col items-center gap-5 text-center">
           <p className="max-w-md text-text-muted">
             The best way to understand HardwareNeeds is to use it.

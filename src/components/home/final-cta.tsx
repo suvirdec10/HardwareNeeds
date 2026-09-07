@@ -3,7 +3,7 @@ import { LinkButton } from "@/components/ui/button";
 
 export function FinalCta() {
   return (
-    <section className="border-t border-border py-24 md:py-32">
+    <section className="divider-fade-top py-24 md:py-32">
       <div className="container-page">
         <div className="relative overflow-hidden rounded-2xl border border-border bg-canvas-raised px-8 py-16 text-center sm:px-16">
           <div

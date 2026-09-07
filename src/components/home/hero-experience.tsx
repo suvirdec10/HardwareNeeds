@@ -66,6 +66,8 @@ export function HeroExperience() {
   return (
     <section ref={wrapperRef} className="relative" style={{ height: capable ? "300vh" : "auto" }}>
       <div className={capable ? "sticky top-0 h-screen overflow-hidden" : "relative overflow-hidden"}>
+        {capable && <div className="bg-grid-pattern -z-20" />}
+
         <div className="absolute inset-0 -z-10">
           {capable ? (
             <HeroCanvas explode={explode} hovered={hovered} onHover={setHovered} />
@@ -76,13 +78,13 @@ export function HeroExperience() {
 
         <div className="grain-overlay" />
 
-        <div className="container-page relative flex h-full min-h-screen flex-col justify-center py-32 lg:py-40">
+        <div className="container-page relative grid h-full min-h-screen grid-cols-1 items-center gap-8 py-28 lg:grid-cols-[1.15fr_1fr] lg:py-0">
           <div
             style={capable ? { opacity: heroOpacity, transform: `translateY(${heroY}px)` } : undefined}
-            className="max-w-2xl"
+            className="max-w-xl"
           >
             <Eyebrow>Hardware planning, made understandable</Eyebrow>
-            <h1 className="mt-5 text-balance text-[2.5rem] font-semibold leading-[1.08] tracking-[-0.02em] text-text sm:text-6xl lg:text-[4.25rem]">
+            <h1 className="mt-5 text-balance text-[2.5rem] font-semibold leading-[1.08] tracking-[-0.02em] text-text sm:text-6xl lg:text-[3.5rem] xl:text-[4.1rem]">
               Hardware, made understandable.
             </h1>
             <p className="mt-6 max-w-lg text-balance text-lg leading-relaxed text-text-muted">
@@ -100,10 +102,22 @@ export function HeroExperience() {
             </div>
           </div>
 
+          {/* Reserves the right column for the 3D system so the text column never encroaches on it at lg+. */}
+          <div aria-hidden className="hidden lg:block" />
+
           {!capable && (
-            <div className="mt-16">
+            <div className="col-span-full mt-2">
               <HardwareSystemFallback />
             </div>
+          )}
+
+          {capable && (
+            <p
+              style={{ opacity: heroOpacity * 0.8 }}
+              className="pointer-events-none absolute bottom-[18%] right-[8%] hidden font-mono text-[11px] uppercase tracking-[0.12em] text-text-faint lg:block"
+            >
+              Hover the system to explore →
+            </p>
           )}
 
           {capable && (

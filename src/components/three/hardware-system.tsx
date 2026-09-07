@@ -31,52 +31,52 @@ interface LayoutEntry {
 const layout: LayoutEntry[] = [
   {
     id: "cpu",
-    rest: [0.5, 0.05, -0.5],
-    exploded: [0.5, 0.95, -0.5],
+    rest: [0.41, 0.045, -0.41],
+    exploded: [0.41, 0.72, -0.41],
     render: (h, d) => <Cpu hovered={h} dimmed={d} />,
-    labelOffset: [0, 0.28, 0],
+    labelOffset: [0, 0.26, 0],
   },
   {
     id: "cooler",
-    rest: [0.5, 0.09, -0.5],
-    exploded: [0.5, 1.68, -0.5],
+    rest: [0.41, 0.08, -0.41],
+    exploded: [0.41, 1.34, -0.41],
     render: (h, d) => <Cooler hovered={h} dimmed={d} />,
-    labelOffset: [0, 0.55, 0],
+    labelOffset: [0, 0.52, 0],
   },
   {
     id: "ram",
-    rest: [1.05, 0.05, -0.55],
-    exploded: [1.35, 1.15, -0.95],
+    rest: [0.87, 0.045, -0.46],
+    exploded: [0.98, 0.88, -0.7],
     render: (h, d) => <RamStick hovered={h} dimmed={d} />,
-    labelOffset: [0, 0.42, 0],
+    labelOffset: [0, 0.38, 0],
   },
   {
     id: "ram-2",
-    rest: [1.22, 0.05, -0.55],
-    exploded: [1.58, 1.15, -0.95],
+    rest: [1.02, 0.045, -0.46],
+    exploded: [1.42, 1.02, -0.78],
     render: (h, d) => <RamStick hovered={h} dimmed={d} />,
-    labelOffset: [0, 0.42, 0],
+    labelOffset: [0, 0.38, 0],
   },
   {
     id: "gpu",
-    rest: [0, 0.2, 0.6],
-    exploded: [0, 1.35, 1.5],
+    rest: [0, 0.18, 0.5],
+    exploded: [0, 1.02, 1.15],
     render: (h, d) => <GpuPart hovered={h} dimmed={d} />,
-    labelOffset: [0, 0.35, 0],
+    labelOffset: [0, 0.33, 0],
   },
   {
     id: "storage",
-    rest: [-0.95, 0.03, 0.55],
-    exploded: [-1.35, 0.75, 0.95],
+    rest: [-0.78, 0.028, 0.46],
+    exploded: [-1.08, 0.56, 0.72],
     render: (h, d) => <StoragePart hovered={h} dimmed={d} />,
-    labelOffset: [0, 0.2, 0],
+    labelOffset: [0, 0.19, 0],
   },
   {
     id: "psu",
-    rest: [0, -0.85, 0],
-    exploded: [0, -2.05, 0],
+    rest: [0, -0.72, 0],
+    exploded: [0, -1.38, 0],
     render: (h, d) => <PsuPart hovered={h} dimmed={d} />,
-    labelOffset: [0, 0.42, 0],
+    labelOffset: [0, 0.4, 0],
   },
 ];
 
@@ -88,17 +88,21 @@ export interface HardwareSystemProps {
   showTooltip?: boolean;
   compact?: boolean;
   animateCamera?: boolean;
+  /** World-space offset applied to the whole rig — used to bias composition (e.g. right-aligned in a hero split layout). */
+  positionOffset?: [number, number, number];
+  /** Base resting rotation of the rig, before pointer parallax. */
+  baseRotation?: [number, number, number];
 }
 
 function CameraRig({ explode }: { explode: number }) {
   const { camera } = useThree();
-  const near = React.useMemo(() => new THREE.Vector3(3.6, 2.1, 4.2), []);
-  const far = React.useMemo(() => new THREE.Vector3(4.6, 1.4, 5.6), []);
+  const near = React.useMemo(() => new THREE.Vector3(3.9, 2.15, 4.5), []);
+  const far = React.useMemo(() => new THREE.Vector3(4.7, 1.6, 5.5), []);
 
   useFrame((_, delta) => {
     const target = near.clone().lerp(far, explode);
     camera.position.lerp(target, Math.min(1, delta * 1.6));
-    camera.lookAt(0, 0.1, 0);
+    camera.lookAt(0, 0.02, 0);
   });
 
   return null;
@@ -115,13 +119,16 @@ export function HardwareSystem({
   showLabels = true,
   showTooltip = true,
   animateCamera = false,
+  positionOffset = [0, 0, 0],
+  baseRotation = [0.15, -0.34, 0],
 }: HardwareSystemProps) {
   const rig = React.useRef<THREE.Group>(null);
 
   useFrame((state, delta) => {
     if (!rig.current) return;
-    const targetX = -state.pointer.y * 0.12;
-    const targetY = state.pointer.x * 0.18;
+    const [bx, by] = baseRotation;
+    const targetX = bx - state.pointer.y * 0.09;
+    const targetY = by + state.pointer.x * 0.13;
     rig.current.rotation.x = THREE.MathUtils.lerp(rig.current.rotation.x, targetX, Math.min(1, delta * 2));
     rig.current.rotation.y = THREE.MathUtils.lerp(rig.current.rotation.y, targetY, Math.min(1, delta * 2));
   });
@@ -130,10 +137,10 @@ export function HardwareSystem({
   const hoveredEntry = layout.find((l) => l.id === hovered);
 
   return (
-    <group ref={rig}>
+    <group position={positionOffset}>
       {animateCamera && <CameraRig explode={explode} />}
-      <group rotation={[0.18, -0.5, 0]}>
-        <CaseFrame visible opacity={0.5 - explode * 0.38} />
+      <group ref={rig} rotation={baseRotation}>
+        <CaseFrame visible opacity={0.42 - explode * 0.32} />
 
         <Part id="motherboard" rest={[0, 0, 0]} exploded={[0, 0, 0]} explode={explode} hovered={hovered} onHover={onHover}>
           <Motherboard hovered={hovered === "motherboard"} dimmed={hovered !== null && hovered !== "motherboard"} />
@@ -157,8 +164,8 @@ export function HardwareSystem({
             {showLabels && (
               <Html position={entry.labelOffset} center distanceFactor={8} occlude={false} zIndexRange={[10, 0]}>
                 <div
-                  className="pointer-events-none whitespace-nowrap rounded border border-border-strong bg-canvas-raised/90 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-text-muted backdrop-blur-sm transition-opacity duration-500"
-                  style={{ opacity: explode > 0.3 && hovered !== entry.id ? Math.min(1, (explode - 0.3) * 2) : 0 }}
+                  className="pointer-events-none whitespace-nowrap rounded border border-border-strong bg-canvas-raised px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-text shadow-[0_4px_16px_-4px_rgba(0,0,0,0.8)] backdrop-blur-sm transition-opacity duration-500"
+                  style={{ opacity: explode > 0.22 && hovered !== entry.id ? Math.min(1, (explode - 0.22) * 2.4) : 0 }}
                 >
                   {getCategory(idToCategory(entry.id))?.name}
                 </div>

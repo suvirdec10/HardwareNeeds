@@ -13,7 +13,7 @@ export function LearnTeaser() {
     .filter((t): t is NonNullable<typeof t> => Boolean(t));
 
   return (
-    <section className="border-t border-border py-24 md:py-32">
+    <section className="divider-fade-top py-24 md:py-32">
       <div className="container-page">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">

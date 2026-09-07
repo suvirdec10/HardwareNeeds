@@ -12,7 +12,6 @@ import { QuestionStep } from "./question-step";
 import { RecommendationCard } from "./recommendation-card";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/tag";
-import { cn } from "@/lib/utils";
 
 type Phase = "goal" | "questions" | "loading" | "results";
 
@@ -84,9 +83,7 @@ export function PlanExperience() {
       {phase === "questions" && goal && question && (
         <div className="mx-auto max-w-xl">
           <div className="flex items-center justify-between">
-            <Eyebrow>
-              {goal.label} · Step {step + 1} of {goal.questions.length}
-            </Eyebrow>
+            <Eyebrow>{goal.label}</Eyebrow>
             <button
               onClick={startOver}
               className="inline-flex items-center gap-1.5 text-[12px] font-medium text-text-faint transition-colors hover:text-text-muted"
@@ -95,16 +92,24 @@ export function PlanExperience() {
             </button>
           </div>
 
-          <div className="mt-4 flex gap-1.5">
-            {goal.questions.map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "h-1 flex-1 rounded-full transition-colors duration-300",
-                  i <= step ? "bg-accent" : "bg-surface-3",
-                )}
-              />
-            ))}
+          <div className="mt-4 flex items-center gap-3">
+            <div className="flex flex-1 gap-1.5">
+              {goal.questions.map((_, i) => (
+                <div key={i} className="h-1 flex-1 overflow-hidden rounded-full bg-surface-3">
+                  <div
+                    className="h-full rounded-full bg-accent transition-transform duration-500"
+                    style={{
+                      transform: `scaleX(${i < step ? 1 : i === step ? 1 : 0})`,
+                      transformOrigin: "left",
+                      boxShadow: i === step ? "0 0 10px rgba(76,141,255,0.5)" : undefined,
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <span className="shrink-0 font-mono text-[11px] tabular-nums text-text-faint">
+              {step + 1}/{goal.questions.length}
+            </span>
           </div>
 
           <div key={question.id} className="mt-10 animate-fade-up">
@@ -128,8 +133,10 @@ export function PlanExperience() {
       )}
 
       {phase === "loading" && (
-        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-border-strong border-t-accent" />
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5 text-center">
+          <div className="h-px w-40 overflow-hidden rounded-full bg-surface-3">
+            <div className="h-full w-full origin-left animate-[loading-fill_0.7s_var(--ease-premium)_forwards] bg-accent" />
+          </div>
           <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-text-muted">
             Matching hardware to your goal
           </p>
@@ -138,7 +145,7 @@ export function PlanExperience() {
 
       {phase === "results" && goal && (
         <div className="mx-auto max-w-3xl">
-          <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex flex-wrap items-start justify-between gap-6 animate-fade-up">
             <div>
               <Eyebrow>Your recommendation</Eyebrow>
               <h1 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.01em] text-text sm:text-4xl">
@@ -168,8 +175,14 @@ export function PlanExperience() {
             </div>
           ) : (
             <div className="mt-12 space-y-6">
-              {recommendations.map((r) => (
-                <RecommendationCard key={r.categoryId} recommendation={r} />
+              {recommendations.map((r, i) => (
+                <div
+                  key={r.categoryId}
+                  className="animate-fade-up"
+                  style={{ animationDelay: `${Math.min(i, 6) * 70}ms` }}
+                >
+                  <RecommendationCard recommendation={r} />
+                </div>
               ))}
             </div>
           )}

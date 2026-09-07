@@ -101,7 +101,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         )}
       </div>
 
-      <div className="mt-16 flex flex-wrap items-center gap-4 border-t border-border pt-10">
+      <div className="mt-16 flex flex-wrap items-center gap-4 divider-fade-top pt-10">
         <Link
           href={`/plan`}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-strong hover:text-accent"

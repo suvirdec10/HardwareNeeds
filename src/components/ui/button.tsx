@@ -14,10 +14,10 @@ interface BaseProps {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-accent text-[#04070d] hover:bg-accent-strong active:bg-accent shadow-[0_1px_0_0_rgba(255,255,255,0.25)_inset]",
+    "bg-accent text-[#04070d] shadow-[0_1px_0_0_rgba(255,255,255,0.25)_inset,0_1px_2px_rgba(0,0,0,0.3)] hover:bg-accent-strong hover:shadow-[0_1px_0_0_rgba(255,255,255,0.3)_inset,0_6px_16px_-4px_rgba(76,141,255,0.45)] active:bg-accent",
   secondary:
     "bg-transparent text-text border border-border-strong hover:border-accent-border hover:bg-surface",
-  ghost: "bg-transparent text-text-muted hover:text-text",
+  ghost: "bg-transparent text-text-muted hover:text-text hover:bg-surface/60",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -27,7 +27,7 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center rounded-md font-medium tracking-[-0.01em] transition-all duration-200 ease-out cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98] whitespace-nowrap";
+  "inline-flex items-center justify-center rounded-md font-medium tracking-[-0.01em] transition-[background-color,border-color,box-shadow,transform,opacity,color] cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-40 disabled:pointer-events-none hover:-translate-y-px active:translate-y-0 active:scale-[0.98] whitespace-nowrap";
 
 export function Button({
   variant = "primary",

@@ -45,7 +45,7 @@ function Chain({ pairs }: { pairs: [string, string][] }) {
 
 export function CompatibilityTeaser() {
   return (
-    <section className="border-t border-border py-24 md:py-32">
+    <section className="divider-fade-top py-24 md:py-32">
       <div className="container-page">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>

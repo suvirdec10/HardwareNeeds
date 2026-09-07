@@ -6,6 +6,12 @@ import { linksFor } from "@/lib/data/compatibility";
 import { Tag } from "@/components/ui/tag";
 import { Card } from "@/components/ui/card";
 
+const kindTone = {
+  critical: "danger",
+  physical: "warning",
+  performance: "accent",
+} as const;
+
 export function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
   const category = getCategory(recommendation.categoryId);
   const links = linksFor(recommendation.categoryId).filter(
@@ -69,21 +75,22 @@ export function RecommendationCard({ recommendation }: { recommendation: Recomme
       </div>
 
       {links.length > 0 && (
-        <div className="border-t border-border px-6 py-5 sm:px-8">
+        <div className="divider-fade-top px-6 py-5 sm:px-8">
           <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">
             Compatibility
           </p>
-          <ul className="mt-3 space-y-1.5">
+          <ul className="mt-3 space-y-2.5">
             {links.map((link) => (
-              <li key={link.to} className="text-[13px] text-text-muted">
-                <span className="text-text">{getCategory(link.to)?.name}:</span> {link.label}
+              <li key={link.to} className="flex flex-wrap items-center gap-2 text-[13px] text-text-muted">
+                <Tag tone={kindTone[link.kind]}>{getCategory(link.to)?.name}</Tag>
+                {link.label}
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-canvas-raised px-6 py-5 sm:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 divider-fade-top bg-canvas-raised px-6 py-5 sm:px-8">
         <div className="flex flex-wrap gap-3">
           <Link
             href={`/learn/${category.slug}`}

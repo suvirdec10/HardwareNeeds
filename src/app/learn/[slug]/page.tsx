@@ -68,7 +68,7 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
       )}
 
       {!topic.hasVisualization && (
-        <div className="border-t border-border">
+        <div className="divider-fade-top">
           <div className="container-page py-20">
             <Eyebrow>How it works</Eyebrow>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
@@ -83,7 +83,7 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
         </div>
       )}
 
-      <div className="border-t border-border">
+      <div className="divider-fade-top">
         <div className="container-page py-20">
           <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr]">
             <div>
@@ -134,7 +134,7 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
         </div>
       </div>
 
-      <div className="border-t border-border">
+      <div className="divider-fade-top">
         <div className="container-page grid gap-10 py-20 sm:grid-cols-2">
           <div>
             <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.1em] text-danger">
@@ -163,7 +163,7 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
         </div>
       </div>
 
-      <div className="border-t border-border">
+      <div className="divider-fade-top">
         <div className="container-page flex flex-wrap items-center justify-between gap-6 py-16">
           <p className="text-text-muted">See {category.name} products and pricing.</p>
           <div className="flex flex-wrap gap-4">
