@@ -13,13 +13,13 @@ export function HeroCanvas({
   onHover: (id: string | null) => void;
 }) {
   return (
-    <SceneCanvas>
+    <SceneCanvas camera={{ position: [2.85, 1.6, 3.3], fov: 38 }}>
       <HardwareSystem
         explode={explode}
         hovered={hovered}
         onHover={onHover}
         animateCamera
-        positionOffset={[1.3, 0, 0]}
+        positionOffset={[0.55, 0, 0]}
       />
     </SceneCanvas>
   );

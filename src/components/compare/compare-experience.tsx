@@ -91,56 +91,79 @@ export function CompareExperience() {
           />
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="mt-6 grid items-stretch gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-[1fr_auto_1fr]">
           {[productA, productB].map((p, i) => (
-            <div key={p.id + i} className="rounded-xl border border-border bg-surface p-5">
-              <p className="text-[15px] font-medium text-text">
+            <div key={p.id + i} className="bg-canvas p-6">
+              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">
+                {i === 0 ? "Product A" : "Product B"}
+              </span>
+              <p className="mt-2 text-xl font-semibold tracking-[-0.01em] text-text">
                 {p.brand} {p.name}
               </p>
-              <p className="mt-1 text-[13px] text-text-muted">{p.summary}</p>
-              <p className="mt-3 font-mono text-lg text-text">${p.priceUSD.toLocaleString("en-US")}</p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-text-muted">{p.summary}</p>
+              <div className="mt-4 flex items-baseline gap-2">
+                <span className="font-mono text-2xl text-text">${p.priceUSD.toLocaleString("en-US")}</span>
+                {productA.priceUSD !== productB.priceUSD &&
+                  p.priceUSD === Math.min(productA.priceUSD, productB.priceUSD) && (
+                    <span className="text-[12px] font-medium text-success">
+                      ${Math.abs(productA.priceUSD - productB.priceUSD).toLocaleString("en-US")} less
+                    </span>
+                  )}
+              </div>
             </div>
           ))}
+          <div className="hidden items-center justify-center bg-canvas px-2 sm:flex">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border-strong bg-surface font-mono text-[11px] text-text-faint">
+              vs
+            </span>
+          </div>
         </div>
 
-        <div className="mt-10 overflow-hidden rounded-xl border border-border">
-          <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-3 border-b border-border bg-canvas-raised px-4 py-3.5 font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-4 sm:px-5">
-            <span>Spec</span>
-            <span className="truncate" title={`${productA.brand} ${productA.name}`}>A</span>
-            <span className="truncate" title={`${productB.brand} ${productB.name}`}>B</span>
+        <div className="mt-10">
+          <div className="grid grid-cols-[1.3fr_1fr_1fr] gap-3 px-1 pb-3 font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint sm:gap-4">
+            <span>Specification</span>
+            <span className="truncate" title={`${productA.brand} ${productA.name}`}>
+              {productA.brand}
+            </span>
+            <span className="truncate" title={`${productB.brand} ${productB.name}`}>
+              {productB.brand}
+            </span>
           </div>
-          {specRows.map((row) => {
-            const explanation = explainSpec(category.id, row.label);
-            const differs = row.a !== row.b;
-            return (
-              <div key={row.label} className="border-b border-border bg-surface last:border-b-0">
-                <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-3 px-4 pt-4 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-4 sm:px-5">
-                  <div className="text-[13px] text-text-muted">{row.label}</div>
-                  <div
-                    className={cn(
-                      "font-mono text-[13.5px]",
-                      differs ? "font-semibold text-text" : "text-text-muted",
-                    )}
-                  >
-                    {row.a}
+          <div className="divide-y divide-border-faint rounded-xl border border-border">
+            {specRows.map((row) => {
+              const explanation = explainSpec(category.id, row.label);
+              const differs = row.a !== row.b;
+              return (
+                <div key={row.label} className={cn("px-4 py-4 sm:px-5", differs && "bg-accent-dim")}>
+                  <div className="grid grid-cols-[1.3fr_1fr_1fr] items-center gap-3 sm:gap-4">
+                    <div className="flex items-center gap-2 text-[13px] text-text-muted">
+                      {differs && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />}
+                      {row.label}
+                    </div>
+                    <div
+                      className={cn(
+                        "font-mono text-[13.5px]",
+                        differs ? "font-semibold text-accent-strong" : "text-text-muted",
+                      )}
+                    >
+                      {row.a}
+                    </div>
+                    <div
+                      className={cn(
+                        "font-mono text-[13.5px]",
+                        differs ? "font-semibold text-accent-strong" : "text-text-muted",
+                      )}
+                    >
+                      {row.b}
+                    </div>
                   </div>
-                  <div
-                    className={cn(
-                      "font-mono text-[13.5px]",
-                      differs ? "font-semibold text-text" : "text-text-muted",
-                    )}
-                  >
-                    {row.b}
-                  </div>
+                  {explanation && (
+                    <p className="mt-2 text-[12.5px] leading-relaxed text-text-faint">{explanation}</p>
+                  )}
                 </div>
-                {explanation && (
-                  <p className="px-4 pb-4 pt-2 text-[12.5px] leading-relaxed text-text-faint sm:px-5">
-                    {explanation}
-                  </p>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         <div className="mt-10 flex flex-wrap gap-4">

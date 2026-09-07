@@ -54,17 +54,17 @@ export function HeroExperience() {
     };
   }, [capable]);
 
-  const heroOpacity = mapRange(progress, 0, 0.18, 1, 0);
-  const heroY = mapRange(progress, 0, 0.22, 0, -40);
-  const scrollHintOpacity = mapRange(progress, 0, 0.06, 1, 0);
-  const explode = mapRange(progress, 0.16, 0.7, 0, 1);
-  const captionOpacityIn = mapRange(progress, 0.42, 0.56, 0, 1);
-  const captionOpacityOut = mapRange(progress, 0.82, 0.94, 1, 0);
+  const heroOpacity = mapRange(progress, 0, 0.2, 1, 0);
+  const heroY = mapRange(progress, 0, 0.24, 0, -36);
+  const scrollHintOpacity = mapRange(progress, 0, 0.07, 1, 0);
+  const explode = mapRange(progress, 0.18, 0.78, 0, 1);
+  const captionOpacityIn = mapRange(progress, 0.46, 0.6, 0, 1);
+  const captionOpacityOut = mapRange(progress, 0.86, 0.97, 1, 0);
   const captionOpacity = Math.min(captionOpacityIn, captionOpacityOut);
-  const captionY = mapRange(progress, 0.42, 0.56, 16, 0);
+  const captionY = mapRange(progress, 0.46, 0.6, 16, 0);
 
   return (
-    <section ref={wrapperRef} className="relative" style={{ height: capable ? "300vh" : "auto" }}>
+    <section ref={wrapperRef} className="relative" style={{ height: capable ? "170vh" : "auto" }}>
       <div className={capable ? "sticky top-0 h-screen overflow-hidden" : "relative overflow-hidden"}>
         {capable && <div className="bg-grid-pattern -z-20" />}
 
@@ -72,25 +72,31 @@ export function HeroExperience() {
           {capable ? (
             <HeroCanvas explode={explode} hovered={hovered} onHover={setHovered} />
           ) : (
-            <div className="h-full w-full bg-[radial-gradient(ellipse_at_60%_35%,rgba(76,141,255,0.08),transparent_60%)]" />
+            <div className="h-full w-full bg-[radial-gradient(ellipse_at_60%_35%,rgba(76,141,255,0.1),transparent_60%)]" />
           )}
         </div>
 
+        {/* Legibility scrim behind the text column — independent of whatever the object is doing. */}
+        {capable && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 -z-[5] w-full lg:w-[52%]"
+            style={{
+              background:
+                "linear-gradient(105deg, rgba(8,9,11,0.94) 0%, rgba(8,9,11,0.75) 45%, rgba(8,9,11,0) 85%)",
+            }}
+          />
+        )}
+
         <div className="grain-overlay" />
 
-        <div
-          className={
-            capable
-              ? "container-page relative grid h-full min-h-screen grid-cols-1 items-center gap-8 py-28 lg:grid-cols-[1.15fr_1fr] lg:py-0"
-              : "container-page relative py-28"
-          }
-        >
+        <div className="container-page relative flex h-full min-h-screen flex-col justify-center py-24 lg:py-0">
           <div
             style={capable ? { opacity: heroOpacity, transform: `translateY(${heroY}px)` } : undefined}
             className="max-w-xl"
           >
             <Eyebrow>Hardware planning, made understandable</Eyebrow>
-            <h1 className="mt-5 text-balance text-[2.5rem] font-semibold leading-[1.08] tracking-[-0.02em] text-text sm:text-6xl lg:text-[3.5rem] xl:text-[4.1rem]">
+            <h1 className="mt-5 text-balance text-[2.6rem] font-semibold leading-[1.05] tracking-[-0.02em] text-text sm:text-6xl lg:text-[3.75rem] xl:text-[4.5rem]">
               Hardware, made understandable.
             </h1>
             <p className="mt-6 max-w-lg text-balance text-lg leading-relaxed text-text-muted">
@@ -114,13 +120,10 @@ export function HeroExperience() {
             )}
           </div>
 
-          {/* Reserves the right column for the 3D system so the text column never encroaches on it at lg+. */}
-          {capable && <div aria-hidden className="hidden lg:block" />}
-
           {capable && (
             <p
               style={{ opacity: heroOpacity * 0.8 }}
-              className="pointer-events-none absolute bottom-[18%] right-[8%] hidden font-mono text-[11px] uppercase tracking-[0.12em] text-text-faint lg:block"
+              className="pointer-events-none absolute bottom-[16%] right-[6%] hidden font-mono text-[11px] uppercase tracking-[0.12em] text-text-faint lg:block"
             >
               Hover the system to explore →
             </p>
@@ -129,13 +132,13 @@ export function HeroExperience() {
           {capable && (
             <div
               style={{ opacity: captionOpacity, transform: `translateY(${captionY}px)` }}
-              className="pointer-events-none absolute inset-x-0 bottom-20 z-20 flex flex-col items-center text-center"
+              className="pointer-events-none absolute inset-x-0 bottom-16 z-20 flex flex-col items-center text-center"
             >
               <div
                 className="absolute inset-x-0 bottom-0 -z-10 h-56"
                 style={{
                   background:
-                    "radial-gradient(ellipse 60% 100% at 50% 100%, rgba(8,9,11,0.9), transparent 75%)",
+                    "radial-gradient(ellipse 60% 100% at 50% 100%, rgba(8,9,11,0.92), transparent 75%)",
                 }}
               />
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">

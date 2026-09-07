@@ -1,18 +1,22 @@
 import { HeroExperience } from "@/components/home/hero-experience";
+import { ProblemSection } from "@/components/home/problem-section";
 import { ConceptSection } from "@/components/home/concept-section";
 import { PlannerTeaser } from "@/components/home/planner-teaser";
-import { CompatibilityTeaser } from "@/components/home/compatibility-teaser";
+import { RecommendationSection } from "@/components/home/recommendation-showcase";
 import { LearnTeaser } from "@/components/home/learn-teaser";
+import { CompatibilityTeaser } from "@/components/home/compatibility-teaser";
 import { FinalCta } from "@/components/home/final-cta";
 
 export default function Home() {
   return (
     <>
       <HeroExperience />
+      <ProblemSection />
       <ConceptSection />
       <PlannerTeaser />
-      <CompatibilityTeaser />
+      <RecommendationSection />
       <LearnTeaser />
+      <CompatibilityTeaser />
       <FinalCta />
     </>
   );

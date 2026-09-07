@@ -7,8 +7,9 @@
  */
 
 export type CategoryGroup =
-  | "Computer Hardware"
-  | "Displays & Input"
+  | "Compute"
+  | "System"
+  | "Display & Input"
   | "Networking"
   | "Other";
 

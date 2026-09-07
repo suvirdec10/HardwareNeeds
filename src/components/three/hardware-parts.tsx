@@ -16,11 +16,11 @@ export const ACCENT = "#4c8dff";
 export const ACCENT_STRONG = "#6ba1ff";
 
 export const partMaterials = {
-  chassis: { color: "#1a1c21", metalness: 0.5, roughness: 0.38, clearcoat: 0.25, clearcoatRoughness: 0.3 },
-  chassisDark: { color: "#101216", metalness: 0.35, roughness: 0.55 },
-  pcb: { color: "#0d1f16", metalness: 0.1, roughness: 0.8 },
-  metal: { color: "#9297a0", metalness: 0.78, roughness: 0.34, clearcoat: 0.22, clearcoatRoughness: 0.35 },
-  metalDark: { color: "#4c4f57", metalness: 0.7, roughness: 0.38 },
+  chassis: { color: "#33373f", metalness: 0.5, roughness: 0.36, clearcoat: 0.3, clearcoatRoughness: 0.28 },
+  chassisDark: { color: "#22252c", metalness: 0.35, roughness: 0.5 },
+  pcb: { color: "#12271b", metalness: 0.1, roughness: 0.78 },
+  metal: { color: "#c3c8d1", metalness: 0.75, roughness: 0.3, clearcoat: 0.3, clearcoatRoughness: 0.3 },
+  metalDark: { color: "#71767f", metalness: 0.65, roughness: 0.36 },
 };
 
 export interface PartProps {
@@ -173,7 +173,7 @@ export function Cooler({ hovered, dimmed }: { hovered: boolean; dimmed: boolean 
         {Array.from({ length: 5 }).map((_, i) => (
           <mesh key={i} rotation={[0, 0, (i * Math.PI * 2) / 5]} position={[0, 0.02, 0]}>
             <boxGeometry args={[0.18, 0.01, 0.05]} />
-            <meshStandardMaterial color="#3a3d44" metalness={0.5} roughness={0.5} transparent opacity={dimmed ? 0.5 : 1} />
+            <meshStandardMaterial color="#4e535d" metalness={0.5} roughness={0.45} transparent opacity={dimmed ? 0.5 : 1} />
           </mesh>
         ))}
       </group>
@@ -245,7 +245,7 @@ export function CaseFrame({ visible, opacity }: { visible: boolean; opacity: num
   if (!visible) return null;
   return (
     <lineSegments geometry={points} position={[0, -0.15, 0]}>
-      <lineBasicMaterial color="#454a53" transparent opacity={opacity} />
+      <lineBasicMaterial color="#6b7280" transparent opacity={opacity} />
     </lineSegments>
   );
 }

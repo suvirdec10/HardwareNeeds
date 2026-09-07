@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import * as Icons from "lucide-react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Boxes } from "lucide-react";
 import { learnTopics } from "@/lib/data/learn";
 import { getCategory } from "@/lib/data/categories";
-import { Eyebrow } from "@/components/ui/tag";
+import { Eyebrow, Tag } from "@/components/ui/tag";
 
 export const metadata: Metadata = {
   title: "Learn",
@@ -12,6 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default function LearnIndexPage() {
+  const featured = learnTopics.filter((t) => t.hasVisualization);
+  const rest = learnTopics.filter((t) => !t.hasVisualization);
+
   return (
     <div className="container-page py-32 md:py-40">
       <Eyebrow>Learn</Eyebrow>
@@ -23,8 +26,42 @@ export default function LearnIndexPage() {
         to be understood, not skimmed past.
       </p>
 
+      {featured.length > 0 && (
+        <div className="mt-14 space-y-4">
+          {featured.map((topic) => {
+            const category = getCategory(topic.categoryId);
+            if (!category) return null;
+            return (
+              <Link
+                key={topic.categoryId}
+                href={`/learn/${category.slug}`}
+                className="group grid gap-6 overflow-hidden rounded-2xl border border-accent-border bg-gradient-to-br from-accent-dim to-transparent p-8 transition-colors hover:border-accent sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-10"
+              >
+                <span className="flex h-14 w-14 items-center justify-center rounded-xl border border-accent-border bg-canvas text-accent-strong">
+                  <Boxes className="h-6 w-6" strokeWidth={1.5} />
+                </span>
+                <div>
+                  <Tag tone="accent">Interactive deep-dive</Tag>
+                  <p className="mt-3 text-2xl font-semibold tracking-[-0.01em] text-text">
+                    {topic.title}: what&apos;s actually inside.
+                  </p>
+                  <p className="mt-1.5 max-w-lg text-[13.5px] leading-relaxed text-text-muted">
+                    {topic.hook} Explore a 3D breakdown of the die, cores, and cache as you scroll.
+                  </p>
+                </div>
+                <ArrowRight className="h-5 w-5 shrink-0 text-accent-strong transition-transform group-hover:translate-x-1 sm:justify-self-end" />
+              </Link>
+            );
+          })}
+          <p className="text-[12.5px] text-text-faint">
+            More components are getting this treatment over time — starting with the parts that
+            benefit most from seeing how they actually work.
+          </p>
+        </div>
+      )}
+
       <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {learnTopics.map((topic) => {
+        {rest.map((topic) => {
           const category = getCategory(topic.categoryId);
           if (!category) return null;
           const Icon = (Icons as unknown as Record<string, Icons.LucideIcon>)[category.icon] ?? Icons.Box;

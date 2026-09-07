@@ -32,6 +32,16 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
   const topic = category ? getLearnTopic(category.id) : undefined;
   if (!category || !topic) notFound();
 
+  const relatedTopics = topic.interactsWith
+    .map((rel) => {
+      const relCategory = getCategory(rel.categoryId);
+      const relTopic = getLearnTopic(rel.categoryId);
+      if (!relCategory || !relTopic) return null;
+      return { category: relCategory, topic: relTopic, note: rel.note };
+    })
+    .filter((r): r is NonNullable<typeof r> => Boolean(r))
+    .slice(0, 3);
+
   return (
     <div>
       <div className="container-page py-32 md:py-40">
@@ -170,9 +180,32 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
         </div>
       </div>
 
+      {relatedTopics.length > 0 && (
+        <div className="divider-fade-top">
+          <div className="container-page py-20">
+            <Eyebrow>Related topics</Eyebrow>
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              {relatedTopics.map((rt) => (
+                <Link
+                  key={rt.category.id}
+                  href={`/learn/${rt.category.slug}`}
+                  className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:bg-surface-2"
+                >
+                  <div>
+                    <p className="text-[14.5px] font-medium text-text">{rt.topic.title}</p>
+                    <p className="mt-1.5 text-[12.5px] leading-snug text-text-muted">{rt.note}</p>
+                  </div>
+                  <ArrowRight className="mt-4 h-3.5 w-3.5 text-text-faint opacity-0 transition-opacity group-hover:opacity-100" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="divider-fade-top">
         <div className="container-page flex flex-wrap items-center justify-between gap-6 py-16">
-          <p className="text-text-muted">See {category.name} products and pricing.</p>
+          <p className="text-text-muted">See {category.name} products and pricing, or get a build recommended.</p>
           <div className="flex flex-wrap gap-4">
             <Link
               href={`/hardware/${category.slug}`}
@@ -185,6 +218,12 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
               className="inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-text"
             >
               Compare options <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              href="/plan"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-text"
+            >
+              Plan your hardware <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>

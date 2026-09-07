@@ -10,17 +10,19 @@ function Icon({ name, className }: { name: string; className?: string }) {
   return <Cmp className={className} strokeWidth={1.75} />;
 }
 
-/** The three components every build starts with — given a distinct, larger treatment. */
+/** The parts every build hinges on — given a distinct, larger treatment. */
 const PRIMARY_IDS = new Set(["cpu", "gpu", "motherboard"]);
 
 export function CategorySection({
   id,
+  index,
   title,
   description,
   categories,
   variant,
 }: {
   id: string;
+  index: string;
   title: string;
   description: string;
   categories: HardwareCategory[];
@@ -29,9 +31,16 @@ export function CategorySection({
   return (
     <section id={id} className="scroll-mt-24 divider-fade-top py-20 md:py-24">
       <div className="container-page">
-        <div className="max-w-xl">
-          <h2 className="text-2xl font-semibold tracking-[-0.01em] text-text sm:text-3xl">{title}</h2>
-          <p className="mt-3 leading-relaxed text-text-muted">{description}</p>
+        <div className="flex items-start gap-5">
+          {index && (
+            <span className="mt-1 shrink-0 font-mono text-sm text-text-faint" aria-hidden>
+              {index}
+            </span>
+          )}
+          <div className="max-w-xl">
+            <h2 className="text-2xl font-semibold tracking-[-0.01em] text-text sm:text-3xl">{title}</h2>
+            <p className="mt-3 leading-relaxed text-text-muted">{description}</p>
+          </div>
         </div>
 
         {variant === "featured" && (

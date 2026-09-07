@@ -1,33 +1,32 @@
 import { ArrowRight } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
+import { Eyebrow } from "@/components/ui/tag";
 
 export function FinalCta() {
   return (
-    <section className="divider-fade-top py-24 md:py-32">
-      <div className="container-page">
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-canvas-raised px-8 py-16 text-center sm:px-16">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-60"
-            style={{
-              background:
-                "radial-gradient(ellipse at 50% 0%, rgba(76,141,255,0.10), transparent 60%)",
-            }}
-          />
-          <div className="relative">
-            <h2 className="text-balance text-3xl font-semibold tracking-[-0.01em] text-text sm:text-4xl">
-              You said what you want to do.
-              <br className="hidden sm:block" /> Let&apos;s figure out what you need.
-            </h2>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-              <LinkButton href="/plan" size="lg">
-                Plan Your Hardware
-                <ArrowRight className="h-4 w-4" />
-              </LinkButton>
-              <LinkButton href="/learn" variant="secondary" size="lg">
-                Explore Learn
-              </LinkButton>
-            </div>
-          </div>
+    <section className="relative overflow-hidden divider-fade-top py-32 md:py-44">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse 60% 55% at 50% 0%, rgba(76,141,255,0.1), transparent 70%)",
+        }}
+      />
+      <div className="container-page relative text-center">
+        <Eyebrow>Let&apos;s get started</Eyebrow>
+        <h2 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-[-0.02em] text-text sm:text-5xl lg:text-6xl">
+          Tell us what you want to do.
+          <br />
+          Let&apos;s figure out what you need.
+        </h2>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <LinkButton href="/plan" size="lg">
+            Plan Your Hardware
+            <ArrowRight className="h-4 w-4" />
+          </LinkButton>
+          <LinkButton href="/learn" variant="secondary" size="lg">
+            Explore Learn
+          </LinkButton>
         </div>
       </div>
     </section>

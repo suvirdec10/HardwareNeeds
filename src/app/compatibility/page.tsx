@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, AlertOctagon, Ruler, Gauge } from "lucide-react";
 import { compatibilityLinks } from "@/lib/data/compatibility";
 import { LinkRow } from "@/components/compatibility/link-row";
+import { SystemDiagram } from "@/components/compatibility/system-diagram";
 import { Eyebrow } from "@/components/ui/tag";
 
 export const metadata: Metadata = {
@@ -44,7 +45,20 @@ export default function CompatibilityPage() {
         numbers, but the same reasoning a knowledgeable builder would apply.
       </p>
 
-      <div className="mt-14 space-y-16">
+      <div className="mt-14">
+        <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">
+          A computer is a system
+        </p>
+        <p className="mt-2 max-w-lg text-[13.5px] leading-relaxed text-text-muted">
+          Every core component depends on at least one other. Follow the lines — or tap any part
+          to browse it.
+        </p>
+        <div className="mt-6">
+          <SystemDiagram />
+        </div>
+      </div>
+
+      <div className="mt-16 space-y-16">
         {groups.map((group) => {
           const links = compatibilityLinks.filter((l) => l.kind === group.kind);
           return (

@@ -10,24 +10,38 @@ export const metadata: Metadata = {
   description: "Browse every hardware category HardwareNeeds covers.",
 };
 
-const groupMeta: Record<string, { description: string; variant: "featured" | "compact" | "list" }> = {
-  "Computer Hardware": {
-    description: "The core components that make up a desktop system.",
+const groupMeta: Record<
+  string,
+  { index: string; description: string; variant: "featured" | "compact" | "list" }
+> = {
+  Compute: {
+    index: "01",
+    description: "The parts that do the actual work — what everything else exists to support.",
     variant: "featured",
   },
-  "Displays & Input": {
+  System: {
+    index: "02",
+    description: "What holds compute together, feeds it power, and keeps it from overheating.",
+    variant: "featured",
+  },
+  "Display & Input": {
+    index: "03",
     description: "What you see, and how you control everything else.",
     variant: "compact",
   },
   Networking: {
+    index: "04",
     description: "Getting every device online, reliably.",
     variant: "compact",
   },
   Other: {
+    index: "05",
     description: "Everything else worth knowing about.",
     variant: "list",
   },
 };
+
+const groupOrder = ["Compute", "System", "Display & Input", "Networking", "Other"];
 
 export default function HardwarePage() {
   const groups = categoriesByGroup();
@@ -47,16 +61,19 @@ export default function HardwarePage() {
         </div>
       </div>
 
-      {Array.from(groups.entries()).map(([group, categories]) => (
-        <CategorySection
-          key={group}
-          id={group.toLowerCase().replace(/\s+/g, "-")}
-          title={group}
-          description={groupMeta[group]?.description ?? ""}
-          categories={categories}
-          variant={groupMeta[group]?.variant ?? "compact"}
-        />
-      ))}
+      {groupOrder
+        .filter((group) => groups.has(group))
+        .map((group) => (
+          <CategorySection
+            key={group}
+            id={group.toLowerCase().replace(/\s+/g, "-")}
+            index={groupMeta[group]?.index ?? ""}
+            title={group}
+            description={groupMeta[group]?.description ?? ""}
+            categories={groups.get(group) ?? []}
+            variant={groupMeta[group]?.variant ?? "compact"}
+          />
+        ))}
     </div>
   );
 }

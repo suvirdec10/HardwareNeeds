@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
 import { getGoal } from "@/lib/data/goals";
+import { getCategory } from "@/lib/data/categories";
 import type { PlanAnswers } from "@/lib/data/types";
 import { generateRecommendations } from "@/lib/data/recommend";
 import { GoalGrid } from "./goal-grid";
@@ -12,6 +13,7 @@ import { QuestionStep } from "./question-step";
 import { RecommendationCard } from "./recommendation-card";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/tag";
+import { Check } from "lucide-react";
 
 type Phase = "goal" | "questions" | "loading" | "results";
 
@@ -51,7 +53,8 @@ export function PlanExperience() {
       setStep((s) => s + 1);
     } else {
       setPhase("loading");
-      window.setTimeout(() => setPhase("results"), 700);
+      const focusCount = Math.min(goal.focusCategories.length, 6);
+      window.setTimeout(() => setPhase("results"), 420 + focusCount * 180);
     }
   }
 
@@ -132,14 +135,35 @@ export function PlanExperience() {
         </div>
       )}
 
-      {phase === "loading" && (
-        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5 text-center">
-          <div className="h-px w-40 overflow-hidden rounded-full bg-surface-3">
-            <div className="h-full w-full origin-left animate-[loading-fill_0.7s_var(--ease-premium)_forwards] bg-accent" />
-          </div>
-          <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-text-muted">
-            Matching hardware to your goal
+      {phase === "loading" && goal && (
+        <div className="mx-auto flex min-h-[50vh] max-w-sm flex-col items-center justify-center text-center">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
+            Building your recommendation
           </p>
+          <div className="mt-8 w-full space-y-2.5">
+            {goal.focusCategories.slice(0, 6).map((id, i) => {
+              const category = getCategory(id);
+              if (!category) return null;
+              return (
+                <div
+                  key={id}
+                  className="flex animate-fade-up items-center gap-3 rounded-lg border border-border-faint bg-surface px-4 py-2.5"
+                  style={{ animationDelay: `${i * 180}ms` }}
+                >
+                  <span
+                    className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-accent bg-accent-dim opacity-0"
+                    style={{
+                      animation: "pop-in 0.3s var(--ease-premium) both",
+                      animationDelay: `${i * 180 + 260}ms`,
+                    }}
+                  >
+                    <Check className="h-2.5 w-2.5 text-accent-strong" strokeWidth={3} />
+                  </span>
+                  <span className="text-[13.5px] text-text-muted">{category.name}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -174,7 +198,31 @@ export function PlanExperience() {
               </p>
             </div>
           ) : (
-            <div className="mt-12 space-y-6">
+            <div
+              className="mt-10 flex flex-wrap items-center justify-between gap-6 rounded-xl border border-border bg-canvas-raised px-6 py-5 animate-fade-up sm:px-8"
+              style={{ animationDelay: "80ms" }}
+            >
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">
+                  Estimated total
+                </p>
+                <p className="mt-1.5 font-mono text-3xl text-text">
+                  $
+                  {recommendations
+                    .reduce((sum, r) => sum + r.product.priceUSD, 0)
+                    .toLocaleString("en-US")}
+                </p>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <p className="max-w-xs text-[13.5px] leading-relaxed text-text-muted">
+                {recommendations.length} {recommendations.length === 1 ? "part" : "parts"}, chosen
+                to work together — not picked in isolation.
+              </p>
+            </div>
+          )}
+
+          {recommendations.length > 0 && (
+            <div className="mt-8 space-y-6">
               {recommendations.map((r, i) => (
                 <div
                   key={r.categoryId}

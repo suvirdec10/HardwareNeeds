@@ -96,8 +96,8 @@ export interface HardwareSystemProps {
 
 function CameraRig({ explode }: { explode: number }) {
   const { camera } = useThree();
-  const near = React.useMemo(() => new THREE.Vector3(3.9, 2.15, 4.5), []);
-  const far = React.useMemo(() => new THREE.Vector3(4.7, 1.6, 5.5), []);
+  const near = React.useMemo(() => new THREE.Vector3(2.85, 1.6, 3.3), []);
+  const far = React.useMemo(() => new THREE.Vector3(3.55, 1.15, 4.15), []);
 
   useFrame((_, delta) => {
     const target = near.clone().lerp(far, explode);
