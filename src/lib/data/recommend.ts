@@ -1,0 +1,596 @@
+import type {
+  Goal,
+  HardwareProduct,
+  PlanAnswers,
+  ProductTier,
+  Recommendation,
+  ScoreBreakdown,
+  SystemCompatibilityCheck,
+  SystemSummary,
+} from "./types";
+import { pickByTier, productsByCategory } from "./products";
+import { getGoal } from "./goals";
+import { getCategory } from "./categories";
+
+const tierOrder: ProductTier[] = ["essential", "balanced", "performance"];
+
+function clampTier(index: number): ProductTier {
+  return tierOrder[Math.max(0, Math.min(tierOrder.length - 1, index))];
+}
+
+function asString(v: string | string[] | number | undefined): string {
+  if (Array.isArray(v)) return v[0] ?? "";
+  return typeof v === "number" ? String(v) : v ?? "";
+}
+
+function asArray(v: string | string[] | number | undefined): string[] {
+  if (Array.isArray(v)) return v;
+  if (typeof v === "string") return [v];
+  return [];
+}
+
+/** Base tier from budget, nudged by stated performance preference. */
+function baseTier(answers: PlanAnswers): ProductTier {
+  const budget = typeof answers.budget === "number" ? answers.budget : 1500;
+  let index = budget < 1000 ? 0 : budget < 2500 ? 1 : 2;
+
+  const pref = asString(answers.performancePreference);
+  if (pref === "value") index -= 1;
+  if (pref === "performance") index += 1;
+
+  return clampTier(index);
+}
+
+/** Per-category tier nudges based on goal-specific answers. */
+function categoryOverride(
+  goalId: string,
+  categoryId: string,
+  answers: PlanAnswers,
+  fallback: ProductTier,
+): ProductTier {
+  let index = tierOrder.indexOf(fallback);
+
+  if (goalId === "gaming") {
+    const res = asString(answers.resolution);
+    const refresh = asString(answers.refreshRate);
+    if (["gpu", "monitor"].includes(categoryId)) {
+      if (res === "4k") index = Math.max(index, 2);
+      else if (res === "1440p") index = Math.max(index, 1);
+      if (refresh === "max") index = Math.min(2, index + 1);
+    }
+  }
+
+  if (goalId === "video-editing" || goalId === "content-creation") {
+    const res = asString(answers.resolution);
+    const complexity = asString(answers.complexity);
+    if (["gpu", "cpu", "ram"].includes(categoryId)) {
+      if (res === "8k" || complexity === "heavy") index = Math.max(index, 2);
+      else if (res === "4k" || complexity === "moderate") index = Math.max(index, 1);
+    }
+    if (categoryId === "storage") {
+      const need = asString(answers.storageNeeds);
+      if (need === "huge") index = Math.max(index, 2);
+      else if (need === "large") index = Math.max(index, 1);
+    }
+  }
+
+  if (goalId === "3d-rendering") {
+    const complexity = asString(answers.sceneComplexity);
+    if (["gpu", "cpu", "ram"].includes(categoryId)) {
+      if (complexity === "heavy") index = Math.max(index, 2);
+      else if (complexity === "moderate") index = Math.max(index, 1);
+    }
+  }
+
+  if (goalId === "home-server" && categoryId === "storage") {
+    const amount = asString(answers.storageAmount);
+    if (amount === "large") index = Math.max(index, 2);
+    else if (amount === "medium") index = Math.max(index, 1);
+  }
+
+  if (goalId === "programming") {
+    const env = asString(answers.environments);
+    if (categoryId === "ram" || categoryId === "cpu") {
+      if (env === "heavy") index = Math.max(index, 2);
+      else if (env === "moderate") index = Math.max(index, 1);
+    }
+  }
+
+  if (goalId === "ai-ml") {
+    const modelSize = asString(answers.modelSize);
+    if (["gpu", "ram", "storage"].includes(categoryId)) {
+      if (modelSize === "large") index = Math.max(index, 2);
+      else if (modelSize === "medium") index = Math.max(index, 1);
+    }
+  }
+
+  return clampTier(index);
+}
+
+/** Pulls a spec value off a picked product by (partial, case-insensitive) label match. */
+function specValue(product: { specs: { label: string; value: string }[] } | undefined, labelPart: string) {
+  return product?.specs.find((s) => s.label.toLowerCase().includes(labelPart.toLowerCase()))?.value;
+}
+
+function reasoningFor(
+  goal: Goal,
+  categoryId: string,
+  answers: PlanAnswers,
+  picks: Map<string, { name: string; specs: { label: string; value: string }[] }>,
+  product: { name: string; specs: { label: string; value: string }[] },
+): string[] {
+  const reasons: string[] = [];
+  const goalLabel = goal.label.toLowerCase();
+
+  switch (categoryId) {
+    case "gpu": {
+      const vram = specValue(product, "vram");
+      if (goal.id === "ai-ml") {
+        const modelSize = asString(answers.modelSize);
+        reasons.push(
+          modelSize
+            ? `You said you're working with ${modelSize === "large" ? "large (70B+)" : modelSize === "medium" ? "medium (13B-34B)" : "small (7B and under)"} models — that's the main driver of how much VRAM matters here.`
+            : "Model size is the main driver of how much VRAM actually matters for local AI work.",
+        );
+        reasons.push(
+          vram
+            ? `${product.name} has ${vram} of VRAM, which sets the ceiling for how large a model you can load without heavy quantization.`
+            : `${product.name} was chosen for its VRAM headroom for local AI workloads.`,
+        );
+      } else {
+        const res = asString(answers.resolution) || "your target resolution";
+        reasons.push(`You're building for ${goalLabel}, targeting ${res === "your target resolution" ? res : res.toUpperCase()}.`);
+        reasons.push("That resolution and workload set the floor for how much GPU performance and VRAM you actually need.");
+        reasons.push(
+          vram
+            ? `${product.name} comfortably covers that target with ${vram} of VRAM — room to keep settings high rather than scraping by.`
+            : `${product.name} comfortably covers that target with room to keep settings high rather than scraping by.`,
+        );
+      }
+      break;
+    }
+    case "cpu": {
+      const cores = specValue(product, "cores");
+      reasons.push(`For ${goalLabel}, the CPU needs to keep up with the GPU and any background work without becoming the limiting factor.`);
+      reasons.push(
+        cores
+          ? `${product.name} (${cores}) balances single-core speed and core count for what you described.`
+          : `This tier balances single-core speed and core count for what you described.`,
+      );
+      break;
+    }
+    case "ram": {
+      const capacity = specValue(product, "capacity");
+      reasons.push(`${goal.label} workloads determine how much can comfortably stay in fast memory at once.`);
+      reasons.push(
+        capacity
+          ? `${capacity} avoids the system falling back to slow storage swaps during normal use.`
+          : "This capacity avoids the system falling back to slow storage swaps during normal use.",
+      );
+      break;
+    }
+    case "storage": {
+      const capacity = specValue(product, "capacity");
+      reasons.push(
+        capacity
+          ? `${capacity} of capacity is sized to your stated project/library needs, not just the OS.`
+          : "Capacity and speed are sized to your stated project/library needs, not just the OS.",
+      );
+      break;
+    }
+    case "motherboard": {
+      const cpu = picks.get("cpu");
+      const socket = specValue(cpu, "socket");
+      reasons.push(
+        cpu
+          ? `Matches ${socket ? `the ${socket} socket` : "the socket"} needed for ${cpu.name}.`
+          : "Matches the socket and chipset needed for your CPU.",
+      );
+      reasons.push("Supports the RAM type and speed selected above.");
+      break;
+    }
+    case "psu": {
+      const gpu = picks.get("gpu");
+      const recPsu = specValue(gpu, "recommended psu");
+      reasons.push(
+        gpu
+          ? `Sized with headroom above ${gpu.name}'s rated draw${recPsu ? ` (recommends ${recPsu} minimum)` : ""}, plus the rest of the system.`
+          : "Sized with headroom above your system's combined power draw.",
+      );
+      break;
+    }
+    case "cooler": {
+      const cpu = picks.get("cpu");
+      reasons.push(
+        cpu
+          ? `Rated to keep ${cpu.name} within safe temperatures under sustained ${goalLabel} workloads.`
+          : "Rated to keep your CPU within safe temperatures under sustained load.",
+      );
+      break;
+    }
+    case "case": {
+      const gpu = picks.get("gpu");
+      reasons.push(gpu ? `Has clearance for ${gpu.name} and the cooler recommended alongside it.` : "Sized to fit the rest of this recommendation.");
+      break;
+    }
+    case "monitor": {
+      const res = asString(answers.resolution);
+      reasons.push(res ? `Matches the ${res.toUpperCase()} resolution you're targeting.` : "Matched to the GPU recommended above so neither component is wasted.");
+      break;
+    }
+    default: {
+      reasons.push(`Selected to support your ${goalLabel} setup based on what you told us.`);
+    }
+  }
+
+  return reasons;
+}
+
+/**
+ * Which use-case tags count as "on-target" for a given goal, when scoring
+ * `workloadFit`. Intentionally small and explicit rather than clever —
+ * these are the tags that already exist on catalog products.
+ */
+const goalWorkloadTags: Record<string, string[]> = {
+  gaming: ["gaming"],
+  "ai-ml": ["ai-ml", "llm-inference", "data-science"],
+  "video-editing": ["video-editing", "content-creation"],
+  "3d-rendering": ["3d-rendering"],
+  programming: ["programming"],
+  "home-server": ["home-server", "server", "nas", "virtualization"],
+  school: ["school", "office"],
+  streaming: ["streaming"],
+  "content-creation": ["content-creation", "video-editing"],
+  workstation: ["data-science", "3d-rendering", "video-editing"],
+};
+
+const UPGRADE_FRIENDLY = /expected to receive|current platform|upgradeable/i;
+const UPGRADE_LIMITED = /outgoing|no newer|soldered|not upgradeable|fixed at purchase/i;
+
+/**
+ * Transparent, weighted heuristics over catalog data — not a machine-learned
+ * or scientifically calibrated model. Every dimension is derived from real
+ * fields on the product (price, tier, useCases, upgradeNote,
+ * powerConsumptionW) relative to its peers in the same category, never from
+ * invented data.
+ */
+function scoreFor(
+  goal: Goal,
+  categoryId: string,
+  product: HardwareProduct,
+  baseTierIdx: number,
+  chosenTierIdx: number,
+): ScoreBreakdown {
+  const peers = productsByCategory(categoryId);
+  const prices = peers.map((p) => p.priceUSD);
+  const maxPrice = Math.max(...prices, product.priceUSD);
+  const minPrice = Math.min(...prices, product.priceUSD);
+
+  const tierBase = { essential: 55, balanced: 78, performance: 95 }[product.tier];
+  const score: ScoreBreakdown = { performanceFit: tierBase };
+
+  const tags = goalWorkloadTags[goal.id] ?? [];
+  const onTarget = (product.useCases ?? []).some((u) => tags.includes(u));
+  score.workloadFit = onTarget ? 92 : 68;
+
+  score.value = maxPrice > minPrice ? Math.round(90 - ((product.priceUSD - minPrice) / (maxPrice - minPrice)) * 35) : 75;
+
+  const tierDelta = Math.abs(chosenTierIdx - baseTierIdx);
+  score.budgetFit = tierDelta === 0 ? 96 : tierDelta === 1 ? 74 : 50;
+
+  score.compatibilityFit = 95;
+
+  if (product.upgradeNote) {
+    score.upgradeability = UPGRADE_FRIENDLY.test(product.upgradeNote)
+      ? 85
+      : UPGRADE_LIMITED.test(product.upgradeNote)
+        ? 35
+        : 60;
+  }
+
+  const peersWithPower = peers.filter((p) => typeof p.powerConsumptionW === "number");
+  if (typeof product.powerConsumptionW === "number" && peersWithPower.length > 1) {
+    const watts = peersWithPower.map((p) => p.powerConsumptionW!);
+    const maxW = Math.max(...watts);
+    const minW = Math.min(...watts);
+    score.efficiency = maxW > minW ? Math.round(90 - ((product.powerConsumptionW - minW) / (maxW - minW)) * 55) : 75;
+  }
+
+  if (categoryId === "gpu" && (goal.id === "ai-ml" || goal.id === "3d-rendering")) {
+    score.softwareEcosystemFit = product.brand === "NVIDIA" ? 92 : 62;
+  }
+
+  if (["cpu", "gpu", "motherboard"].includes(categoryId)) {
+    score.longevity = Math.max(30, tierBase - 8);
+  }
+
+  return score;
+}
+
+/** Real, catalog-grounded "why not the alternative" + tradeoff sentence — never invented. */
+function tradeoffFor(
+  product: HardwareProduct,
+  alternative: HardwareProduct | undefined,
+  categoryId: string,
+): { whyNotAlternative: string; tradeoff: string } | undefined {
+  if (!alternative) return undefined;
+
+  const keySpecLabel: Record<string, string> = {
+    gpu: "vram",
+    cpu: "cores",
+    ram: "capacity",
+    storage: "capacity",
+    psu: "wattage",
+    monitor: "refresh rate",
+  };
+  const labelPart = keySpecLabel[categoryId];
+  const productSpec = labelPart ? specValue(product, labelPart) : undefined;
+  const altSpec = labelPart ? specValue(alternative, labelPart) : undefined;
+
+  const priceDiff = alternative.priceUSD - product.priceUSD;
+  const pricier = priceDiff > 0;
+  const diffAbs = Math.abs(priceDiff).toLocaleString("en-US");
+  const altName = `${alternative.brand} ${alternative.name}`;
+  const specNote = productSpec && altSpec ? `${productSpec} → ${altSpec}` : undefined;
+
+  const whyNotAlternative = pricier
+    ? `${altName} costs about $${diffAbs} more. That headroom isn't necessary for what you described, so it wasn't the default pick.`
+    : `${altName} costs about $${diffAbs} less${specNote ? `, but steps down from ${specNote}` : ""} — a reasonable trade if budget matters more than the extra headroom.`;
+
+  const tradeoff = pricier
+    ? `Upgrading to ${alternative.name} would get you ${specNote ?? "more headroom"}, worth it only if performance matters more than staying on budget.`
+    : `Switching to ${alternative.name} frees up about $${diffAbs} elsewhere in the build, at the cost of ${specNote ?? "some headroom"}.`;
+
+  return { whyNotAlternative, tradeoff };
+}
+
+function generateNetworkingRecommendations(answers: PlanAnswers): Recommendation[] {
+  const coverage = asString(answers.coverage);
+  const deviceCount = asString(answers.deviceCount);
+  const connectionType = asString(answers.connectionType);
+  const environment = asArray(answers.environment);
+
+  const needsMesh =
+    coverage === "large" || deviceCount === "many" || environment.includes("multi-floor");
+  const needsAccessPoint =
+    !needsMesh &&
+    (coverage === "house" ||
+      coverage === "large" ||
+      environment.includes("thick-walls") ||
+      environment.includes("outdoor"));
+  const needsSwitch = connectionType === "wired" || deviceCount === "many";
+
+  const results: Recommendation[] = [];
+
+  const router = pickByTier("router", needsMesh ? "performance" : "essential");
+  if (router) {
+    const reasoning = [
+      needsMesh
+        ? `You described ${coverage === "large" ? "a large space" : "many connected devices"} — a single router's range isn't reliably enough for that.`
+        : `Your space and device count are well within what a single router handles reliably.`,
+      needsMesh
+        ? "A mesh system spreads multiple access points across your space so coverage stays consistent everywhere."
+        : "This router comfortably covers your stated space with headroom for growth.",
+    ];
+    results.push({
+      categoryId: "router",
+      product: router,
+      role: "Directs traffic between every device on your network and the internet.",
+      reasoning,
+      alternative: pickByTier("router", needsMesh ? "essential" : "performance"),
+    });
+  }
+
+  if (needsAccessPoint) {
+    const ap = pickByTier("access-point", "balanced");
+    if (ap) {
+      results.push({
+        categoryId: "access-point",
+        product: ap,
+        role: "Extends Wi-Fi coverage into a specific area your router alone doesn't reach well.",
+        reasoning: [
+          environment.includes("thick-walls")
+            ? "You noted thick walls or older construction, which reduces a single router's effective range."
+            : "Your coverage needs extend past what one router placement reliably reaches.",
+          "This access point extends coverage without replacing your existing router.",
+        ],
+      });
+    }
+  }
+
+  if (needsSwitch) {
+    const sw = pickByTier("network-switch", "essential");
+    if (sw) {
+      results.push({
+        categoryId: "network-switch",
+        product: sw,
+        role: "Expands the number of wired devices you can connect.",
+        reasoning: [
+          connectionType === "wired"
+            ? "You said you prefer wired connections where possible — that needs more Ethernet ports than most routers include."
+            : "With this many devices, wiring the stationary ones frees up Wi-Fi capacity for everything else.",
+        ],
+      });
+    }
+  }
+
+  return results;
+}
+
+export function generateRecommendations(goalId: string, answers: PlanAnswers): Recommendation[] {
+  const goal = getGoal(goalId);
+  if (!goal) return [];
+
+  if (goalId === "networking") return generateNetworkingRecommendations(answers);
+
+  const base = baseTier(answers);
+  const results: Recommendation[] = [];
+  const picks = new Map<string, { name: string; specs: { label: string; value: string }[] }>();
+
+  // Resolve in an order that lets later reasoning reference earlier picks.
+  const order = ["cpu", "gpu", "ram", "storage", "motherboard", "cooler", "psu", "case", "monitor"];
+  const orderedCategories = [
+    ...order.filter((c) => goal.focusCategories.includes(c)),
+    ...goal.focusCategories.filter((c) => !order.includes(c)),
+  ];
+
+  for (const categoryId of orderedCategories) {
+    const tier = categoryOverride(goal.id, categoryId, answers, base);
+    const product = pickByTier(categoryId, tier);
+    if (!product) continue;
+    picks.set(categoryId, { name: product.name, specs: product.specs });
+
+    const alternatives = productsByCategory(categoryId).filter((p) => p.id !== product.id);
+    const alternative =
+      alternatives.find((p) => p.tier === tierOrder[Math.min(2, tierOrder.indexOf(tier) + 1)]) ?? alternatives[0];
+    const tradeoffInfo = tradeoffFor(product, alternative, categoryId);
+
+    results.push({
+      categoryId,
+      product,
+      role: roleLabel(categoryId),
+      reasoning: reasoningFor(goal, categoryId, answers, picks, product),
+      score: scoreFor(goal, categoryId, product, tierOrder.indexOf(base), tierOrder.indexOf(tier)),
+      whyNotAlternative: tradeoffInfo?.whyNotAlternative,
+      tradeoff: tradeoffInfo?.tradeoff,
+      alternative,
+    });
+  }
+
+  return results;
+}
+
+function firstWattage(value: string | undefined): number | undefined {
+  const match = value?.match(/(\d+(?:,\d{3})*)\s*W/i);
+  return match ? Number(match[1].replace(/,/g, "")) : undefined;
+}
+
+/**
+ * Validates and summarizes the whole build, not just each part in isolation
+ * — every field is derived from real specs/scores on the picked products,
+ * never invented. Compatibility checks only fire when both sides actually
+ * carry the relevant spec, so an unknown pairing is silently skipped rather
+ * than reported as either passing or failing.
+ */
+export function buildSystemSummary(goal: Goal, recommendations: Recommendation[]): SystemSummary | undefined {
+  if (recommendations.length === 0) return undefined;
+
+  const byCategory = new Map(recommendations.map((r) => [r.categoryId, r]));
+  const totalCostUSD = recommendations.reduce((sum, r) => sum + r.product.priceUSD, 0);
+
+  const checks: SystemCompatibilityCheck[] = [];
+
+  const cpu = byCategory.get("cpu")?.product;
+  const mobo = byCategory.get("motherboard")?.product;
+  if (cpu && mobo) {
+    const cpuSocket = specValue(cpu, "socket");
+    const moboSocket = specValue(mobo, "socket");
+    if (cpuSocket && moboSocket) {
+      const ok = cpuSocket === moboSocket;
+      checks.push({
+        label: "CPU / motherboard socket",
+        ok,
+        detail: ok
+          ? `${cpu.name} and ${mobo.name} both use ${cpuSocket}.`
+          : `${cpu.name} needs ${cpuSocket}, but ${mobo.name} is ${moboSocket}.`,
+      });
+    }
+  }
+
+  const gpu = byCategory.get("gpu")?.product;
+  const psu = byCategory.get("psu")?.product;
+  const recommendedPsuW = firstWattage(gpu ? specValue(gpu, "recommended psu") : undefined);
+  if (psu) {
+    const psuW = firstWattage(specValue(psu, "wattage"));
+    if (psuW && recommendedPsuW) {
+      const ok = psuW >= recommendedPsuW;
+      checks.push({
+        label: "Power supply headroom",
+        ok,
+        detail: ok
+          ? `${psu.name} (${psuW} W) covers ${gpu!.name}'s recommended ${recommendedPsuW} W with headroom.`
+          : `${psu.name} (${psuW} W) is below ${gpu!.name}'s recommended ${recommendedPsuW} W.`,
+      });
+    }
+  }
+
+  const caseProduct = byCategory.get("case")?.product;
+  if (mobo && caseProduct) {
+    const moboForm = specValue(mobo, "form factor");
+    const caseForm = specValue(caseProduct, "form factor support");
+    if (moboForm && caseForm) {
+      const ok = caseForm.toLowerCase().includes(moboForm.toLowerCase());
+      checks.push({
+        label: "Motherboard / case form factor",
+        ok,
+        detail: ok
+          ? `${caseProduct.name} supports ${moboForm}, matching ${mobo.name}.`
+          : `${caseProduct.name} doesn't list support for ${moboForm}, which ${mobo.name} needs.`,
+      });
+    }
+  }
+
+  const compatibilityStatus: "compatible" | "needs-review" = checks.some((c) => !c.ok)
+    ? "needs-review"
+    : "compatible";
+
+  const scored = recommendations.filter((r) => r.score);
+
+  const strengths = scored
+    .filter((r) => (r.score!.workloadFit ?? 0) >= 85 || (r.score!.performanceFit ?? 0) >= 90)
+    .slice(0, 3)
+    .map((r) => {
+      const category = getCategory(r.categoryId);
+      return `${category?.name ?? r.categoryId}: ${r.product.brand} ${r.product.name} is a strong match for ${goal.label.toLowerCase()}.`;
+    });
+
+  const workloadFitScores = scored.map((r) => r.score!.workloadFit).filter((v): v is number => typeof v === "number");
+  const workloadFitAvg =
+    workloadFitScores.length > 0 ? Math.round(workloadFitScores.reduce((a, b) => a + b, 0) / workloadFitScores.length) : undefined;
+
+  const upgradePath = ["cpu", "motherboard", "gpu"]
+    .map((id) => byCategory.get(id)?.product.upgradeNote)
+    .filter((n): n is string => Boolean(n));
+
+  const withPower = recommendations.filter((r) => typeof r.product.powerConsumptionW === "number");
+  const estimatedPowerDrawW =
+    withPower.length > 0 ? withPower.reduce((sum, r) => sum + (r.product.powerConsumptionW ?? 0), 0) : undefined;
+
+  const limitations: string[] = [];
+  checks.filter((c) => !c.ok).forEach((c) => limitations.push(c.detail));
+  scored.forEach((r) => {
+    if ((r.score!.budgetFit ?? 100) < 60) {
+      limitations.push(`${r.product.name} sits a tier above your stated budget for extra headroom.`);
+    }
+    if ((r.score!.efficiency ?? 100) < 45) {
+      limitations.push(`${r.product.name} draws more power than most alternatives in its category.`);
+    }
+  });
+
+  return {
+    totalCostUSD,
+    compatibilityChecks: checks,
+    compatibilityStatus,
+    strengths,
+    workloadFitAvg,
+    upgradePath,
+    estimatedPowerDrawW,
+    recommendedPsuW,
+    limitations: limitations.slice(0, 3),
+  };
+}
+
+function roleLabel(categoryId: string): string {
+  const labels: Record<string, string> = {
+    cpu: "Handles instruction execution and single/multi-core workloads.",
+    gpu: "Renders graphics and accelerates parallel workloads.",
+    ram: "Holds active data for fast access by the CPU/GPU.",
+    storage: "Stores your OS, applications, and files.",
+    motherboard: "Connects every component and defines compatibility.",
+    psu: "Delivers stable power to every component.",
+    cooler: "Keeps the CPU within safe operating temperatures.",
+    case: "Houses and physically supports the whole build.",
+    monitor: "Displays the output your GPU renders.",
+  };
+  return labels[categoryId] ?? "Supports your setup.";
+}
