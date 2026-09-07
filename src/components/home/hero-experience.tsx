@@ -78,7 +78,13 @@ export function HeroExperience() {
 
         <div className="grain-overlay" />
 
-        <div className="container-page relative grid h-full min-h-screen grid-cols-1 items-center gap-8 py-28 lg:grid-cols-[1.15fr_1fr] lg:py-0">
+        <div
+          className={
+            capable
+              ? "container-page relative grid h-full min-h-screen grid-cols-1 items-center gap-8 py-28 lg:grid-cols-[1.15fr_1fr] lg:py-0"
+              : "container-page relative py-28"
+          }
+        >
           <div
             style={capable ? { opacity: heroOpacity, transform: `translateY(${heroY}px)` } : undefined}
             className="max-w-xl"
@@ -100,16 +106,16 @@ export function HeroExperience() {
                 Explore Hardware
               </LinkButton>
             </div>
+
+            {!capable && (
+              <div className="mt-14">
+                <HardwareSystemFallback />
+              </div>
+            )}
           </div>
 
           {/* Reserves the right column for the 3D system so the text column never encroaches on it at lg+. */}
-          <div aria-hidden className="hidden lg:block" />
-
-          {!capable && (
-            <div className="col-span-full mt-2">
-              <HardwareSystemFallback />
-            </div>
-          )}
+          {capable && <div aria-hidden className="hidden lg:block" />}
 
           {capable && (
             <p
