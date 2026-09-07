@@ -1,5 +1,6 @@
 import Link from "next/link";
 import * as Icons from "lucide-react";
+import { XCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
 import type { CompatibilityLink } from "@/lib/data/types";
 import { getCategory } from "@/lib/data/categories";
 import { Tag } from "@/components/ui/tag";
@@ -16,6 +17,12 @@ const kindLabel = {
   performance: "Should match",
 } as const;
 
+const kindIcon = {
+  critical: XCircle,
+  physical: AlertTriangle,
+  performance: CheckCircle2,
+} as const;
+
 function Icon({ name, className }: { name: string; className?: string }) {
   const Cmp = (Icons as unknown as Record<string, Icons.LucideIcon>)[name] ?? Icons.Box;
   return <Cmp className={className} strokeWidth={1.75} />;
@@ -25,6 +32,7 @@ export function LinkRow({ link }: { link: CompatibilityLink }) {
   const from = getCategory(link.from);
   const to = getCategory(link.to);
   if (!from || !to) return null;
+  const StatusIcon = kindIcon[link.kind];
 
   return (
     <div className="rounded-xl border border-border bg-surface p-5 sm:p-6">
@@ -39,7 +47,10 @@ export function LinkRow({ link }: { link: CompatibilityLink }) {
 
         <div className="flex flex-1 items-center gap-2 sm:min-w-[8rem]">
           <div className="h-px flex-1 bg-border-strong" />
-          <Tag tone={kindTone[link.kind]}>{kindLabel[link.kind]}</Tag>
+          <Tag tone={kindTone[link.kind]}>
+            <StatusIcon className="h-3 w-3" />
+            {kindLabel[link.kind]}
+          </Tag>
           <div className="h-px flex-1 bg-border-strong" />
         </div>
 

@@ -46,11 +46,11 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
         <div className="mt-16 grid gap-12 lg:grid-cols-2">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-accent">What is it?</p>
-            <p className="mt-3 leading-relaxed text-text-muted">{topic.whatIsIt}</p>
+            <p className="mt-3 max-w-prose leading-relaxed text-text-muted">{topic.whatIsIt}</p>
           </div>
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-accent">What does it do?</p>
-            <p className="mt-3 leading-relaxed text-text-muted">{topic.whatItDoes}</p>
+            <p className="mt-3 max-w-prose leading-relaxed text-text-muted">{topic.whatItDoes}</p>
           </div>
         </div>
       </div>
@@ -72,9 +72,13 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
           <div className="container-page py-20">
             <Eyebrow>How it works</Eyebrow>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              {topic.howItWorks.map((section) => (
-                <div key={section.heading} className="rounded-xl border border-border bg-surface p-6">
-                  <p className="text-[15px] font-medium text-text">{section.heading}</p>
+              {topic.howItWorks.map((section, i) => (
+                <div
+                  key={section.heading}
+                  className="group relative overflow-hidden rounded-xl border border-border bg-surface p-6 transition-colors hover:border-border-strong"
+                >
+                  <span className="font-mono text-[11px] text-text-faint">{String(i + 1).padStart(2, "0")}</span>
+                  <p className="mt-1.5 text-[15px] font-medium text-text">{section.heading}</p>
                   <p className="mt-2 text-[13.5px] leading-relaxed text-text-muted">{section.body}</p>
                 </div>
               ))}
@@ -83,16 +87,16 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
         </div>
       )}
 
-      <div className="divider-fade-top">
+      <div className="divider-fade-top bg-canvas-raised">
         <div className="container-page py-20">
           <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr]">
             <div>
               <Eyebrow>Specs that matter</Eyebrow>
-              <div className="mt-6 divide-y divide-border rounded-xl border border-border">
+              <div className="mt-6 divide-y divide-border rounded-xl border border-border bg-surface">
                 {topic.specsThatMatter.map((spec) => (
                   <div key={spec.name} className="p-5">
                     <p className="text-[14px] font-medium text-text">{spec.name}</p>
-                    <p className="mt-1.5 text-[13px] leading-relaxed text-text-muted">{spec.matters}</p>
+                    <p className="mt-1.5 max-w-prose text-[13px] leading-relaxed text-text-muted">{spec.matters}</p>
                   </div>
                 ))}
               </div>
@@ -101,11 +105,11 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
             <div className="space-y-10">
               <div>
                 <Eyebrow>Why it matters</Eyebrow>
-                <p className="mt-3 leading-relaxed text-text-muted">{topic.whyItMatters}</p>
+                <p className="mt-3 max-w-prose leading-relaxed text-text-muted">{topic.whyItMatters}</p>
               </div>
               <div>
                 <Eyebrow>Performance impact</Eyebrow>
-                <p className="mt-3 leading-relaxed text-text-muted">{topic.performanceImpact}</p>
+                <p className="mt-3 max-w-prose leading-relaxed text-text-muted">{topic.performanceImpact}</p>
               </div>
               {topic.interactsWith.length > 0 && (
                 <div>
@@ -115,14 +119,17 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
                       const relCategory = getCategory(rel.categoryId);
                       if (!relCategory) return null;
                       return (
-                        <li key={rel.categoryId} className="text-[13.5px] text-text-muted">
-                          <Link
-                            href={`/learn/${relCategory.slug}`}
-                            className="font-medium text-text hover:text-accent-strong"
-                          >
-                            {relCategory.name}
-                          </Link>{" "}
-                          — {rel.note}
+                        <li key={rel.categoryId} className="flex items-start gap-2 text-[13.5px] text-text-muted">
+                          <ArrowRight className="mt-1 h-3 w-3 shrink-0 text-text-faint" />
+                          <span>
+                            <Link
+                              href={`/learn/${relCategory.slug}`}
+                              className="font-medium text-text hover:text-accent-strong"
+                            >
+                              {relCategory.name}
+                            </Link>{" "}
+                            — {rel.note}
+                          </span>
                         </li>
                       );
                     })}

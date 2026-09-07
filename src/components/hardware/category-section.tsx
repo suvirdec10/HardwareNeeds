@@ -10,6 +10,9 @@ function Icon({ name, className }: { name: string; className?: string }) {
   return <Cmp className={className} strokeWidth={1.75} />;
 }
 
+/** The three components every build starts with — given a distinct, larger treatment. */
+const PRIMARY_IDS = new Set(["cpu", "gpu", "motherboard"]);
+
 export function CategorySection({
   id,
   title,
@@ -34,23 +37,61 @@ export function CategorySection({
         {variant === "featured" && (
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((c) => {
-              const count = productsByCategory(c.id).length;
+              const products = productsByCategory(c.id);
+              const preview = products[0];
+              const isPrimary = PRIMARY_IDS.has(c.id);
+
               return (
                 <Link
                   key={c.id}
                   href={`/hardware/${c.slug}`}
-                  className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:bg-surface-2"
+                  className={cn(
+                    "group relative flex flex-col justify-between overflow-hidden rounded-xl border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:bg-surface-2 hover:shadow-[0_20px_40px_-24px_rgba(0,0,0,0.6)]",
+                    isPrimary ? "border-border p-7" : "border-border p-6",
+                  )}
                 >
+                  {isPrimary && (
+                    <span
+                      aria-hidden
+                      className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-border to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                  )}
                   <div>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-canvas text-text-muted transition-colors group-hover:border-accent-border group-hover:text-accent-strong">
-                      <Icon name={c.icon} className="h-[18px] w-[18px]" />
-                    </span>
-                    <p className="mt-4 text-[15px] font-medium text-text">{c.name}</p>
+                    <div className="flex items-start justify-between">
+                      <span
+                        className={cn(
+                          "flex items-center justify-center rounded-md border border-border bg-canvas text-text-muted transition-colors group-hover:border-accent-border group-hover:text-accent-strong",
+                          isPrimary ? "h-12 w-12" : "h-10 w-10",
+                        )}
+                      >
+                        <Icon name={c.icon} className={isPrimary ? "h-5 w-5" : "h-[18px] w-[18px]"} />
+                      </span>
+                      {isPrimary && (
+                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-faint">
+                          Core component
+                        </span>
+                      )}
+                    </div>
+                    <p className={cn("mt-4 font-medium text-text", isPrimary ? "text-lg" : "text-[15px]")}>
+                      {c.name}
+                    </p>
                     <p className="mt-1.5 text-[13px] leading-snug text-text-muted">{c.tagline}</p>
+
+                    {isPrimary && preview && (
+                      <div className="mt-4 flex items-center gap-2 rounded-md border border-border-faint bg-canvas/60 px-3 py-2">
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+                        <span className="truncate text-[12px] text-text-muted">
+                          e.g. {preview.brand} {preview.name}
+                        </span>
+                        <span className="ml-auto shrink-0 font-mono text-[11px] text-text-faint">
+                          ${preview.priceUSD}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="mt-6 flex items-center justify-between">
                     <span className="font-mono text-[11px] text-text-faint">
-                      {count} sample {count === 1 ? "product" : "products"}
+                      {products.length} sample {products.length === 1 ? "product" : "products"}
                     </span>
                     <ArrowRight className="h-3.5 w-3.5 text-text-faint opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>

@@ -3,13 +3,13 @@
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { categories } from "@/lib/data/categories";
 import { productsByCategory } from "@/lib/data/products";
 import { explainSpec } from "@/lib/data/spec-explanations";
 import { Select } from "@/components/ui/select";
 import { Eyebrow, Tag } from "@/components/ui/tag";
-import { Tooltip } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 const compareCategories = categories.filter((c) => productsByCategory(c.id).length >= 2);
 
@@ -109,31 +109,38 @@ export function CompareExperience() {
             <span className="truncate" title={`${productA.brand} ${productA.name}`}>A</span>
             <span className="truncate" title={`${productB.brand} ${productB.name}`}>B</span>
           </div>
-          {specRows.map((row) => (
-            <div
-              key={row.label}
-              className="grid grid-cols-[1.2fr_1fr_1fr] gap-3 border-b border-border bg-surface px-4 py-4 last:border-b-0 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-4 sm:px-5"
-            >
-              <div className="flex items-center gap-1.5 text-[13px] text-text-muted">
-                {row.label}
-                {explainSpec(category.id, row.label) && (
-                  <Tooltip
-                    trigger={
-                      <button className="text-text-faint hover:text-text-muted" aria-label={`What is ${row.label}?`}>
-                        <Info className="h-3.5 w-3.5" />
-                      </button>
-                    }
+          {specRows.map((row) => {
+            const explanation = explainSpec(category.id, row.label);
+            const differs = row.a !== row.b;
+            return (
+              <div key={row.label} className="border-b border-border bg-surface last:border-b-0">
+                <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-3 px-4 pt-4 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-4 sm:px-5">
+                  <div className="text-[13px] text-text-muted">{row.label}</div>
+                  <div
+                    className={cn(
+                      "font-mono text-[13.5px]",
+                      differs ? "font-semibold text-text" : "text-text-muted",
+                    )}
                   >
-                    <p className="text-[13px] leading-relaxed text-text-muted">
-                      {explainSpec(category.id, row.label)}
-                    </p>
-                  </Tooltip>
+                    {row.a}
+                  </div>
+                  <div
+                    className={cn(
+                      "font-mono text-[13.5px]",
+                      differs ? "font-semibold text-text" : "text-text-muted",
+                    )}
+                  >
+                    {row.b}
+                  </div>
+                </div>
+                {explanation && (
+                  <p className="px-4 pb-4 pt-2 text-[12.5px] leading-relaxed text-text-faint sm:px-5">
+                    {explanation}
+                  </p>
                 )}
               </div>
-              <div className="font-mono text-[13.5px] text-text">{row.a}</div>
-              <div className="font-mono text-[13.5px] text-text">{row.b}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-10 flex flex-wrap gap-4">
