@@ -389,7 +389,7 @@ export const goals: Goal[] = [
     label: "Networking",
     icon: "Wifi",
     description: "Reliable coverage and speed across your whole space.",
-    focusCategories: ["router", "access-point", "network-switch", "wifi-adapter", "ethernet-adapter"],
+    focusCategories: ["router", "access-point", "network-switch"],
     questions: [
       {
         id: "deviceCount",

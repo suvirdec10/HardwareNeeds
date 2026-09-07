@@ -13,6 +13,12 @@ function asString(v: string | string[] | number | undefined): string {
   return typeof v === "number" ? String(v) : v ?? "";
 }
 
+function asArray(v: string | string[] | number | undefined): string[] {
+  if (Array.isArray(v)) return v;
+  if (typeof v === "string") return [v];
+  return [];
+}
+
 /** Base tier from budget, nudged by stated performance preference. */
 function baseTier(answers: PlanAnswers): ProductTier {
   const budget = typeof answers.budget === "number" ? answers.budget : 1500;
@@ -156,9 +162,84 @@ function reasoningFor(
   return reasons;
 }
 
+function generateNetworkingRecommendations(answers: PlanAnswers): Recommendation[] {
+  const coverage = asString(answers.coverage);
+  const deviceCount = asString(answers.deviceCount);
+  const connectionType = asString(answers.connectionType);
+  const environment = asArray(answers.environment);
+
+  const needsMesh =
+    coverage === "large" || deviceCount === "many" || environment.includes("multi-floor");
+  const needsAccessPoint =
+    !needsMesh &&
+    (coverage === "house" ||
+      coverage === "large" ||
+      environment.includes("thick-walls") ||
+      environment.includes("outdoor"));
+  const needsSwitch = connectionType === "wired" || deviceCount === "many";
+
+  const results: Recommendation[] = [];
+
+  const router = pickByTier("router", needsMesh ? "performance" : "essential");
+  if (router) {
+    const reasoning = [
+      needsMesh
+        ? `You described ${coverage === "large" ? "a large space" : "many connected devices"} — a single router's range isn't reliably enough for that.`
+        : `Your space and device count are well within what a single router handles reliably.`,
+      needsMesh
+        ? "A mesh system spreads multiple access points across your space so coverage stays consistent everywhere."
+        : "This router comfortably covers your stated space with headroom for growth.",
+    ];
+    results.push({
+      categoryId: "router",
+      product: router,
+      role: "Directs traffic between every device on your network and the internet.",
+      reasoning,
+      alternative: pickByTier("router", needsMesh ? "essential" : "performance"),
+    });
+  }
+
+  if (needsAccessPoint) {
+    const ap = pickByTier("access-point", "balanced");
+    if (ap) {
+      results.push({
+        categoryId: "access-point",
+        product: ap,
+        role: "Extends Wi-Fi coverage into a specific area your router alone doesn't reach well.",
+        reasoning: [
+          environment.includes("thick-walls")
+            ? "You noted thick walls or older construction, which reduces a single router's effective range."
+            : "Your coverage needs extend past what one router placement reliably reaches.",
+          "This access point extends coverage without replacing your existing router.",
+        ],
+      });
+    }
+  }
+
+  if (needsSwitch) {
+    const sw = pickByTier("network-switch", "essential");
+    if (sw) {
+      results.push({
+        categoryId: "network-switch",
+        product: sw,
+        role: "Expands the number of wired devices you can connect.",
+        reasoning: [
+          connectionType === "wired"
+            ? "You said you prefer wired connections where possible — that needs more Ethernet ports than most routers include."
+            : "With this many devices, wiring the stationary ones frees up Wi-Fi capacity for everything else.",
+        ],
+      });
+    }
+  }
+
+  return results;
+}
+
 export function generateRecommendations(goalId: string, answers: PlanAnswers): Recommendation[] {
   const goal = getGoal(goalId);
   if (!goal) return [];
+
+  if (goalId === "networking") return generateNetworkingRecommendations(answers);
 
   const base = baseTier(answers);
   const results: Recommendation[] = [];
