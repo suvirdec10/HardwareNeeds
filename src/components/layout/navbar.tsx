@@ -49,7 +49,7 @@ export function Navbar() {
           <span className="text-[15px] font-semibold tracking-[-0.01em] text-text">HardwareNeeds</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-8 lg:flex">
           {navItems.map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
@@ -70,14 +70,14 @@ export function Navbar() {
           })}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <LinkButton href="/plan" size="sm">
             Plan Your Hardware
           </LinkButton>
         </div>
 
         <button
-          className="flex h-11 w-11 items-center justify-center rounded-md border border-border text-text md:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-md border border-border text-text lg:hidden"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
@@ -88,7 +88,7 @@ export function Navbar() {
 
       <div
         className={cn(
-          "grid overflow-hidden border-b border-border bg-canvas transition-all duration-300 ease-out md:hidden",
+          "grid overflow-hidden border-b border-border bg-canvas transition-all duration-300 ease-out lg:hidden",
           mobileOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
         )}
       >
