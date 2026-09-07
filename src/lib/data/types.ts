@@ -87,6 +87,17 @@ export interface HardwareProduct {
    * the UI if omitted.
    */
   dataConfidence?: DataConfidence;
+  /**
+   * Provenance metadata for this entry — where the specs came from and how
+   * fresh that check is. Intentionally NOT surfaced prominently in regular
+   * UI (no visitor needs a citation to read a spec sheet); it exists so a
+   * future import pipeline and internal audits have something to check
+   * against. See `src/lib/data/ingestion.ts`.
+   */
+  source?: string;
+  sourceUrl?: string;
+  /** e.g. "2026-01" — when this entry's specs were last cross-checked. */
+  lastVerified?: string;
   /** True for every entry — surfaced in the UI so nobody mistakes this for a live, continuously-synced catalog. */
   isSampleData: true;
 }
@@ -162,10 +173,59 @@ export interface PlanAnswers {
   [questionId: string]: string | string[] | number;
 }
 
+/**
+ * Heuristic scoring dimensions behind a recommendation, 0-100. These are
+ * transparent weighted heuristics over catalog data — not a machine-learned
+ * or scientifically calibrated model — and are presented to users as such.
+ * Not every dimension applies to every category (e.g. `portability` is
+ * meaningless for a PSU); omit rather than force a number.
+ */
+export interface ScoreBreakdown {
+  performanceFit?: number;
+  budgetFit?: number;
+  compatibilityFit?: number;
+  workloadFit?: number;
+  upgradeability?: number;
+  efficiency?: number;
+  value?: number;
+  portability?: number;
+  longevity?: number;
+  softwareEcosystemFit?: number;
+}
+
 export interface Recommendation {
   categoryId: string;
   product: HardwareProduct;
   role: string;
   reasoning: string[];
   alternative?: HardwareProduct;
+  /** Why the alternative wasn't picked instead — shown alongside `alternative`. */
+  whyNotAlternative?: string;
+  /** What you'd be giving up (or gaining) by choosing the alternative instead. */
+  tradeoff?: string;
+  score?: ScoreBreakdown;
+}
+
+/** One real, spec-derived compatibility check across two picked parts. */
+export interface SystemCompatibilityCheck {
+  label: string;
+  ok: boolean;
+  detail: string;
+}
+
+/**
+ * A whole-build summary — validated as a system, not just a list of parts.
+ * Every field is derived from the real picked products (price, specs,
+ * score breakdowns, upgradeNote); nothing here is invented.
+ */
+export interface SystemSummary {
+  totalCostUSD: number;
+  compatibilityChecks: SystemCompatibilityCheck[];
+  compatibilityStatus: "compatible" | "needs-review";
+  strengths: string[];
+  workloadFitAvg?: number;
+  upgradePath: string[];
+  estimatedPowerDrawW?: number;
+  recommendedPsuW?: number;
+  limitations: string[];
 }

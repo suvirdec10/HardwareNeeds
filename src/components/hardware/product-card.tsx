@@ -2,8 +2,8 @@ import Link from "next/link";
 import { ArrowRight, Link2 } from "lucide-react";
 import type { HardwareProduct } from "@/lib/data/types";
 import { linksFor } from "@/lib/data/compatibility";
+import { getCategory } from "@/lib/data/categories";
 import { Tag } from "@/components/ui/tag";
-import { Card } from "@/components/ui/card";
 
 const tierLabel: Record<HardwareProduct["tier"], string> = {
   essential: "Essential",
@@ -19,14 +19,18 @@ const tierTone: Record<HardwareProduct["tier"], "neutral" | "accent" | "success"
 
 export function ProductCard({ product }: { product: HardwareProduct }) {
   const compatCount = linksFor(product.categoryId).length;
+  const category = getCategory(product.categoryId);
 
   return (
-    <Card interactive className="flex flex-col p-6">
+    <Link
+      href={category ? `/hardware/${category.slug}/${product.slug}` : "#"}
+      className="group flex flex-col rounded-xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:shadow-[0_16px_32px_-16px_rgba(0,0,0,0.5)]"
+    >
       <div className="flex items-start justify-between gap-3">
         <Tag tone={tierTone[product.tier]}>{tierLabel[product.tier]}</Tag>
         <span className="font-mono text-sm text-text">${product.priceUSD.toLocaleString("en-US")}</span>
       </div>
-      <p className="mt-4 text-[15px] font-medium text-text">
+      <p className="mt-4 text-[15px] font-medium text-text transition-colors group-hover:text-accent-strong">
         {product.brand} {product.name}
       </p>
       <p className="mt-1.5 text-[13px] leading-snug text-text-muted">{product.summary}</p>
@@ -41,26 +45,21 @@ export function ProductCard({ product }: { product: HardwareProduct }) {
       </dl>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-faint">
-          {product.dataConfidence === "verified" ? "Verified specs" : "Reference specs"}
-        </span>
         <div className="flex items-center gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-faint">
+            {product.dataConfidence === "verified" ? "Verified specs" : "Reference specs"}
+          </span>
           {compatCount > 0 && (
-            <Link
-              href={`/hardware/${product.categoryId}`}
-              className="inline-flex items-center gap-1 text-[12.5px] font-medium text-text-muted hover:text-text"
-            >
+            <span className="inline-flex items-center gap-1 text-[11px] text-text-faint">
               <Link2 className="h-3 w-3" /> {compatCount} compat.
-            </Link>
+            </span>
           )}
-          <Link
-            href={`/compare?category=${product.categoryId}`}
-            className="inline-flex items-center gap-1 text-[12.5px] font-medium text-accent-strong hover:text-accent"
-          >
-            Compare <ArrowRight className="h-3 w-3" />
-          </Link>
         </div>
+        <span className="inline-flex items-center gap-1 text-[12.5px] font-medium text-accent-strong">
+          View details
+          <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+        </span>
       </div>
-    </Card>
+    </Link>
   );
 }

@@ -3,17 +3,19 @@
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCcw, Sparkles } from "lucide-react";
 import { getGoal } from "@/lib/data/goals";
 import { getCategory } from "@/lib/data/categories";
 import type { PlanAnswers } from "@/lib/data/types";
-import { generateRecommendations } from "@/lib/data/recommend";
+import { generateRecommendations, buildSystemSummary } from "@/lib/data/recommend";
 import { GoalGrid } from "./goal-grid";
+import { DescribeYourBuild } from "./describe-input";
 import { QuestionStep } from "./question-step";
 import { RecommendationCard } from "./recommendation-card";
+import { SystemSummary } from "./system-summary";
+import { AiAssistantPanel } from "./ai-assistant-panel";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/tag";
-import { CountUp } from "@/components/ui/count-up";
 import { Check } from "lucide-react";
 
 type Phase = "goal" | "questions" | "loading" | "results";
@@ -28,6 +30,7 @@ export function PlanExperience() {
   const [phase, setPhase] = React.useState<Phase>(initialGoal && getGoal(initialGoal) ? "questions" : "goal");
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState<PlanAnswers>({});
+  const [aiOpen, setAiOpen] = React.useState(false);
 
   const goal = goalId ? getGoal(goalId) : null;
   const question = goal?.questions[step];
@@ -41,10 +44,10 @@ export function PlanExperience() {
     return typeof value === "string" && value.length > 0;
   })();
 
-  function selectGoal(id: string) {
+  function selectGoal(id: string, initialAnswers: PlanAnswers = {}) {
     setGoalId(id);
     setStep(0);
-    setAnswers({});
+    setAnswers(initialAnswers);
     setPhase("questions");
   }
 
@@ -80,9 +83,40 @@ export function PlanExperience() {
     return generateRecommendations(goalId, answers);
   }, [phase, goalId, answers]);
 
+  const systemSummary = React.useMemo(() => {
+    if (recommendations.length === 0 || !goal) return undefined;
+    return buildSystemSummary(goal, recommendations);
+  }, [goal, recommendations]);
+
   return (
     <div className="container-page py-32 md:py-40">
-      {phase === "goal" && <GoalGrid onSelect={selectGoal} />}
+      {phase === "goal" && (
+        <div className="mx-auto max-w-4xl animate-fade-up">
+          <div className="text-center">
+            <Eyebrow>Quick start</Eyebrow>
+            <h1 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.01em] text-text sm:text-5xl">
+              What are you trying to do?
+            </h1>
+            <p className="mx-auto mt-4 max-w-lg text-balance leading-relaxed text-text-muted">
+              Describe it in your own words, or pick the closest match below.
+            </p>
+          </div>
+
+          <div className="mt-10">
+            <DescribeYourBuild onMatched={selectGoal} />
+          </div>
+
+          <div className="mt-14 flex items-center gap-4">
+            <div className="h-px flex-1 bg-border" />
+            <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">or choose manually</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+
+          <div className="mt-10">
+            <GoalGrid onSelect={selectGoal} hideHeader />
+          </div>
+        </div>
+      )}
 
       {phase === "questions" && goal && question && (
         <div className="mx-auto max-w-xl">
@@ -181,7 +215,10 @@ export function PlanExperience() {
                 piece fits.
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
+              <Button size="sm" onClick={() => setAiOpen(true)}>
+                <Sparkles className="h-3.5 w-3.5" /> Ask AI for more suggestions
+              </Button>
               <Button variant="secondary" size="sm" onClick={() => setPhase("questions")}>
                 Adjust answers
               </Button>
@@ -199,26 +236,7 @@ export function PlanExperience() {
               </p>
             </div>
           ) : (
-            <div
-              className="mt-10 flex flex-wrap items-center justify-between gap-6 rounded-xl border border-border bg-canvas-raised px-6 py-5 animate-fade-up sm:px-8"
-              style={{ animationDelay: "80ms" }}
-            >
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">
-                  Estimated total
-                </p>
-                <CountUp
-                  value={recommendations.reduce((sum, r) => sum + r.product.priceUSD, 0)}
-                  prefix="$"
-                  className="mt-1.5 block font-mono text-3xl text-text"
-                />
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <p className="max-w-xs text-[13.5px] leading-relaxed text-text-muted">
-                {recommendations.length} {recommendations.length === 1 ? "part" : "parts"}, chosen
-                to work together — not picked in isolation.
-              </p>
-            </div>
+            systemSummary && <SystemSummary summary={systemSummary} />
           )}
 
           {recommendations.length > 0 && (
@@ -245,6 +263,17 @@ export function PlanExperience() {
             </Link>
           </div>
         </div>
+      )}
+
+      {goalId && (
+        <AiAssistantPanel
+          open={aiOpen}
+          onOpenChange={setAiOpen}
+          goalId={goalId}
+          answers={answers}
+          recommendations={recommendations}
+          onUpdate={(_recs, newAnswers) => setAnswers(newAnswers)}
+        />
       )}
     </div>
   );

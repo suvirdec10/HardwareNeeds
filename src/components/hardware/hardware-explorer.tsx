@@ -9,23 +9,7 @@ import { Select } from "@/components/ui/select";
 import { ProductCard } from "@/components/hardware/product-card";
 import { CategorySection } from "@/components/hardware/category-section";
 import { Reveal } from "@/components/ui/reveal";
-
-const useCaseLabels: Record<string, string> = {
-  "ai-ml": "AI / ML",
-  "llm-inference": "Local LLM",
-  cybersecurity: "Cybersecurity",
-  "3d-rendering": "3D Rendering",
-  "video-editing": "Video Editing",
-  "data-science": "Data Science",
-  "content-creation": "Content Creation",
-  "home-server": "Home Server",
-  "small-business": "Small Business",
-  "edge-ai": "Edge AI",
-};
-
-function labelFor(useCase: string) {
-  return useCaseLabels[useCase] ?? useCase.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
+import { workloadLabel } from "@/lib/utils";
 
 const groupMeta: Record<string, { index: string; description: string; variant: "featured" | "compact" | "list" }> = {
   Compute: { index: "01", description: "The parts that do the actual work — what everything else exists to support.", variant: "featured" },
@@ -60,7 +44,7 @@ export function HardwareExplorer() {
     [],
   );
   const useCaseOptions = React.useMemo(
-    () => [{ value: "all", label: "All use cases" }, ...allUseCases().map((u) => ({ value: u, label: labelFor(u) }))],
+    () => [{ value: "all", label: "All use cases" }, ...allUseCases().map((u) => ({ value: u, label: workloadLabel(u) }))],
     [],
   );
 

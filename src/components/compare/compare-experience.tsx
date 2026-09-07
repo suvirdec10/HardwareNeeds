@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { categories } from "@/lib/data/categories";
 import { productsByCategory } from "@/lib/data/products";
 import { explainSpec } from "@/lib/data/spec-explanations";
+import { compareCallouts } from "@/lib/data/compare-insights";
 import { Select } from "@/components/ui/select";
 import { Eyebrow, Tag } from "@/components/ui/tag";
 import { cn } from "@/lib/utils";
@@ -49,6 +50,8 @@ export function CompareExperience() {
     a: spec.value,
     b: productB.specs.find((s) => s.label === spec.label)?.value ?? "—",
   }));
+
+  const callouts = compareCallouts(productA, productB, category.id);
 
   return (
     <>
@@ -118,6 +121,28 @@ export function CompareExperience() {
             </span>
           </div>
         </div>
+
+        {callouts.length > 0 && (
+          <div key={`callouts-${productA.id}-${productB.id}`} className="mt-10 animate-fade-in-fast">
+            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint">
+              Quick take
+            </span>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {callouts.map((c, i) => {
+                const winner = c.winner === "a" ? productA : productB;
+                return (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-[13px] text-text-muted"
+                  >
+                    <span className="font-medium text-text">{c.label}</span>
+                    <span className="text-text-faint">— {winner.brand} {winner.name}</span>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="mt-10">
           <div className="grid grid-cols-[1.3fr_1fr_1fr] gap-3 px-1 pb-3 font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint sm:gap-4">

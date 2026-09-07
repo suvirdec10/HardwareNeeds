@@ -36,6 +36,8 @@ export const products: HardwareProduct[] = [
     summary: "A balanced 6-core Zen 4 chip for everyday use, schoolwork, and light-to-mid gaming.",
     releaseGeneration: "Zen 4, 2023",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     powerConsumptionW: 65,
     useCases: ["gaming", "school", "office", "programming"],
     specs: [
@@ -61,6 +63,8 @@ export const products: HardwareProduct[] = [
     summary: "The sweet spot for gaming and content creation without overspending.",
     releaseGeneration: "14th Gen (Raptor Lake Refresh), 2023",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     powerConsumptionW: 181,
     useCases: ["gaming", "video-editing", "programming", "content-creation"],
     specs: [
@@ -86,6 +90,8 @@ export const products: HardwareProduct[] = [
     summary: "High core count for rendering, compiling, and heavy parallel workloads.",
     releaseGeneration: "Zen 4, 2022",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     powerConsumptionW: 170,
     useCases: ["3d-rendering", "video-editing", "programming", "data-science", "streaming"],
     specs: [
@@ -113,6 +119,8 @@ export const products: HardwareProduct[] = [
     summary: "Comfortable 1080p gaming with DLSS 3 frame generation to extend its lifespan.",
     releaseGeneration: "Ada Lovelace, 2023",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     powerConsumptionW: 115,
     useCases: ["gaming", "streaming"],
     specs: [
@@ -136,6 +144,8 @@ export const products: HardwareProduct[] = [
     summary: "Smooth 1440p gaming and capable video editing / light AI workload performance.",
     releaseGeneration: "Ada Lovelace, 2024",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     powerConsumptionW: 220,
     useCases: ["gaming", "video-editing", "streaming", "3d-rendering"],
     specs: [
@@ -159,6 +169,8 @@ export const products: HardwareProduct[] = [
     summary: "4K gaming, 3D rendering, and the consumer card of choice for local LLM experimentation.",
     releaseGeneration: "Ada Lovelace, 2022",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     powerConsumptionW: 450,
     useCases: ["gaming", "3d-rendering", "video-editing", "ai-ml", "llm-inference"],
     specs: [
@@ -184,6 +196,8 @@ export const products: HardwareProduct[] = [
     summary: "Low-power, single-slot data-center card built for AI inference and video workloads rather than gaming.",
     releaseGeneration: "Ada Lovelace, 2023",
     dataConfidence: "estimated",
+    source: "Public specifications; some figures (often price) are ballpark",
+    lastVerified: "2026-01",
     powerConsumptionW: 72,
     useCases: ["ai-ml", "llm-inference", "server", "data-science"],
     specs: [
@@ -207,6 +221,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 54,
     summary: "Enough headroom for browsing, office work, and light gaming.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["school", "office", "gaming"],
     specs: [
       { label: "Capacity", value: "16 GB (2x8GB)" },
@@ -227,6 +243,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 109,
     summary: "Comfortable headroom for gaming, editing, and multitasking — the current sweet spot.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["gaming", "video-editing", "programming", "content-creation"],
     specs: [
       { label: "Capacity", value: "32 GB (2x16GB)" },
@@ -247,6 +265,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 219,
     summary: "For large timelines, big datasets, local LLMs, and heavy multitasking.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["video-editing", "3d-rendering", "ai-ml", "data-science", "programming"],
     specs: [
       { label: "Capacity", value: "64 GB (2x32GB)" },
@@ -267,6 +287,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 145,
     summary: "Error-correcting memory for servers and workstations where silent data corruption isn't acceptable.",
     dataConfidence: "estimated",
+    source: "Public specifications; some figures (often price) are ballpark",
+    lastVerified: "2026-01",
     useCases: ["server", "home-server", "virtualization", "data-science"],
     specs: [
       { label: "Capacity", value: "32 GB" },
@@ -288,6 +310,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 54,
     summary: "Fast, affordable primary drive for OS and everyday applications.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["school", "office", "gaming"],
     specs: [
       { label: "Capacity", value: "1 TB" },
@@ -308,6 +332,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 149,
     summary: "Room for a large game library or an active project folder, at flagship speeds.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["gaming", "video-editing", "programming"],
     specs: [
       { label: "Capacity", value: "2 TB" },
@@ -328,6 +354,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 279,
     summary: "High-capacity, high-speed storage for demanding creative work and large game libraries.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["video-editing", "3d-rendering", "gaming"],
     specs: [
       { label: "Capacity", value: "4 TB" },
@@ -349,6 +377,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 84,
     summary: "The cheapest way to add bulk storage for media, backups, or a game library that doesn't need SSD speed.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["home-server", "school", "office"],
     specs: [
       { label: "Capacity", value: "4 TB" },
@@ -370,6 +400,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 159,
     summary: "A compact, reliable AM5 board covering the essentials.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Socket", value: "AM5" },
       { label: "Chipset", value: "B650" },
@@ -390,6 +422,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 219,
     summary: "Full-featured LGA1700 ATX board for Intel gaming and creative builds.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Socket", value: "LGA1700" },
       { label: "Chipset", value: "Z790" },
@@ -410,6 +444,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 599,
     summary: "Flagship AM5 connectivity and power delivery for enthusiast Ryzen builds.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Socket", value: "AM5" },
       { label: "Chipset", value: "X670E" },
@@ -432,6 +468,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 54,
     summary: "Reliable power for entry and mid-range single-GPU builds.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Wattage", value: "550 W" },
       { label: "Efficiency", value: "80+ Bronze" },
@@ -450,6 +488,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 99,
     summary: "Headroom for mid-to-high-end GPUs with efficient, quiet operation.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Wattage", value: "750 W" },
       { label: "Efficiency", value: "80+ Gold" },
@@ -468,6 +508,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 259,
     summary: "High headroom for power-hungry GPUs and high-core CPUs, with digital monitoring.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Wattage", value: "1000 W" },
       { label: "Efficiency", value: "80+ Platinum" },
@@ -488,6 +530,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 35,
     summary: "The reference budget air cooler — quiet, compact, and proven across three generations.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Type", value: "Single-tower air" },
       { label: "Height", value: "159 mm" },
@@ -506,6 +550,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 129,
     summary: "240mm liquid cooling for sustained multi-core workloads.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Type", value: "240mm AIO liquid" },
       { label: "Radiator", value: "240 x 120 x 27mm" },
@@ -524,6 +570,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 189,
     summary: "360mm liquid cooling for high-core, high-TDP CPUs.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Type", value: "360mm AIO liquid" },
       { label: "Radiator", value: "360 x 120 x 27mm" },
@@ -544,6 +592,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 79,
     summary: "Small-footprint case with improved front airflow over the original H510.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Form Factor Support", value: "ATX, Micro-ATX, Mini-ITX" },
       { label: "Max GPU Length", value: "381 mm" },
@@ -562,6 +612,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 109,
     summary: "Balanced airflow and space for most gaming/creative builds.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Form Factor Support", value: "ATX, Micro-ATX, Mini-ITX" },
       { label: "Max GPU Length", value: "412 mm" },
@@ -581,6 +633,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 219,
     summary: "Maximum airflow, clearance, and dual-chamber layout for flagship components.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Form Factor Support", value: "E-ATX, ATX, Micro-ATX, Mini-ITX" },
       { label: "Max GPU Length", value: "446 mm" },
@@ -601,6 +655,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 33,
     summary: "The benchmark premium 120mm fan — quiet, high static pressure, and airflow.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Size", value: "120mm" },
       { label: "Max Airflow", value: "~60 CFM" },
@@ -621,6 +677,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 139,
     summary: "Sharp, responsive 1080p monitor for everyday gaming and work — a long-running budget favorite.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Size", value: "24\"" },
       { label: "Resolution", value: "1920x1080" },
@@ -640,6 +698,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 329,
     summary: "The current sweet spot: sharp Nano IPS color, fast, and comfortably sized.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Size", value: "27\"" },
       { label: "Resolution", value: "2560x1440" },
@@ -659,6 +719,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 999,
     summary: "Maximum detail and motion clarity for high-end gaming, powered by Mini-LED backlighting.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Size", value: "32\"" },
       { label: "Resolution", value: "3840x2160" },
@@ -680,6 +742,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 149,
     summary: "Tenkeyless mechanical keyboard with hot-swappable switches, built for competitive gaming.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Layout", value: "Tenkeyless" },
       { label: "Switches", value: "Hot-swappable mechanical" },
@@ -700,6 +764,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 159,
     summary: "Ultra-lightweight wireless mouse built for fast, precise competitive play.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Weight", value: "63 g" },
       { label: "Sensor", value: "HERO 25K optical" },
@@ -720,6 +786,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 69,
     summary: "The long-running reference webcam for calls and everyday streaming.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Resolution", value: "1080p @ 30fps" },
       { label: "Field of View", value: "78°" },
@@ -739,6 +807,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 129,
     summary: "The best-known USB condenser mic for streaming, podcasting, and recording.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Type", value: "Condenser" },
       { label: "Pattern", value: "Switchable: cardioid, omni, bidirectional, stereo" },
@@ -759,6 +829,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 99,
     summary: "A long-running favorite for comfortable, balanced gaming audio with a detachable mic.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Driver Size", value: "53mm" },
       { label: "Connection", value: "USB / 3.5mm" },
@@ -778,6 +850,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 39,
     summary: "Compact desktop speakers with noticeably fuller sound than laptop or monitor speakers.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Configuration", value: "2.0 stereo" },
       { label: "Total Power", value: "8 W RMS" },
@@ -797,6 +871,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 59,
     summary: "The most broadly compatible wireless controller for PC gaming.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Connection", value: "Bluetooth / 2.4GHz wireless adapter" },
       { label: "Battery", value: "AA batteries or optional rechargeable pack" },
@@ -816,6 +892,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 379,
     summary: "Turns a single Thunderbolt 4 cable into a full desktop setup with 18 ports.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Ports", value: "18 total, incl. 3x USB-C, 5x USB-A, 2.5GbE" },
       { label: "Power Delivery", value: "98 W to host laptop" },
@@ -835,6 +913,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 59,
     summary: "Internal PCIe card bringing fast, low-latency Wi-Fi 6 to a desktop.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Standard", value: "Wi-Fi 6 (802.11ax)" },
       { label: "Max Speed", value: "~2.4 Gbps combined" },
@@ -855,6 +935,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 16,
     summary: "Adds reliable wired networking to a laptop or a board without it.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Speed", value: "1 Gbps" },
       { label: "Connection", value: "USB-A 3.0" },
@@ -873,6 +955,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 249,
     summary: "A widely-used, high-throughput Wi-Fi 6 router for demanding homes.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["home-server", "networking"],
     specs: [
       { label: "Standard", value: "Wi-Fi 6 (802.11ax)" },
@@ -894,6 +978,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 25,
     summary: "Expands a single wired connection into eight — a networking-closet staple.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Ports", value: "8x 1GbE" },
       { label: "Switching Capacity", value: "16 Gbps" },
@@ -913,6 +999,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 99,
     summary: "Dedicated Wi-Fi 6 access point for extending coverage, managed through the UniFi app.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["home-server", "networking", "small-business"],
     specs: [
       { label: "Standard", value: "Wi-Fi 6 (802.11ax)" },
@@ -933,6 +1021,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 149,
     summary: "A widely-deployed 10-Gigabit Ethernet card for servers, NAS, and high-throughput workstations.",
     dataConfidence: "estimated",
+    source: "Public specifications; some figures (often price) are ballpark",
+    lastVerified: "2026-01",
     useCases: ["server", "home-server", "nas", "virtualization"],
     specs: [
       { label: "Ports", value: "2x SFP+ (10GbE)" },
@@ -952,6 +1042,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 299,
     summary: "An all-in-one router, firewall, and UniFi network controller for a home lab or small office.",
     dataConfidence: "estimated",
+    source: "Public specifications; some figures (often price) are ballpark",
+    lastVerified: "2026-01",
     useCases: ["home-server", "cybersecurity", "small-business", "networking"],
     specs: [
       { label: "WAN", value: "1x Gigabit WAN" },
@@ -974,6 +1066,8 @@ export const products: HardwareProduct[] = [
     summary: "Fanless, all-day-battery laptop for school, browsing, and everyday productivity.",
     releaseGeneration: "M2, 2022",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["school", "office", "programming"],
     specs: [
       { label: "Chip", value: "Apple M2 (8-core CPU, up to 10-core GPU)" },
@@ -998,6 +1092,8 @@ export const products: HardwareProduct[] = [
     summary: "A full desktop compressed into a footprint the size of a book — bring your own monitor and peripherals.",
     releaseGeneration: "M2, 2023",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["office", "school", "home-server", "programming"],
     specs: [
       { label: "Chip", value: "Apple M2 (8-core CPU, 10-core GPU)" },
@@ -1020,6 +1116,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 599,
     summary: "A 4-bay network-attached-storage box for shared files, backups, and self-hosted apps.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["home-server", "nas", "small-business"],
     specs: [
       { label: "Bays", value: "4x 3.5\"/2.5\" (drives sold separately)" },
@@ -1042,6 +1140,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 139,
     summary: "Fast, pocketable portable storage for backups and project files.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Capacity", value: "2 TB" },
       { label: "Interface", value: "USB 3.2 Gen 2" },
@@ -1063,6 +1163,8 @@ export const products: HardwareProduct[] = [
     summary: "A complete, credit-card-sized computer — the standard for home labs, robotics, and learning to build.",
     releaseGeneration: "2023",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["home-server", "school", "prototyping", "embedded"],
     specs: [
       { label: "CPU", value: "Broadcom BCM2712, quad-core Cortex-A76 @ 2.4GHz" },
@@ -1085,6 +1187,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 27,
     summary: "The reference microcontroller board for learning electronics and embedded projects.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["school", "prototyping", "embedded"],
     specs: [
       { label: "Microcontroller", value: "ATmega328P" },
@@ -1108,6 +1212,8 @@ export const products: HardwareProduct[] = [
     summary: "Compact hardware for running AI models locally at the edge — robotics, cameras, and embedded inference.",
     releaseGeneration: "2024",
     dataConfidence: "estimated",
+    source: "Public specifications; some figures (often price) are ballpark",
+    lastVerified: "2026-01",
     useCases: ["ai-ml", "edge-ai", "embedded", "prototyping"],
     specs: [
       { label: "AI Performance", value: "Up to 67 TOPS (INT8)" },
@@ -1129,6 +1235,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 179,
     summary: "Captures external 4K video sources for streaming or recording with near-zero latency.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     specs: [
       { label: "Max Capture", value: "4K30 / 1080p60 HDR10" },
       { label: "Passthrough", value: "4K60 HDR10" },
@@ -1149,6 +1257,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 99,
     summary: "Battery backup that protects a desktop and monitor from outages and surges.",
     dataConfidence: "verified",
+    source: "Public manufacturer/retailer specifications",
+    lastVerified: "2026-01",
     useCases: ["home-server", "office"],
     specs: [
       { label: "Capacity", value: "850VA / 450W" },
@@ -1169,6 +1279,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 39,
     summary: "Adds modern USB-C ports to a motherboard that doesn't have them built in.",
     dataConfidence: "estimated",
+    source: "Public specifications; some figures (often price) are ballpark",
+    lastVerified: "2026-01",
     specs: [
       { label: "Interface", value: "PCIe x4" },
       { label: "Ports Added", value: "2x USB-C, up to 10 Gbps each" },
@@ -1187,6 +1299,8 @@ export const products: HardwareProduct[] = [
     priceUSD: 15,
     summary: "Connects a USB-C (DisplayPort Alt Mode) laptop output to an HDMI-only display.",
     dataConfidence: "estimated",
+    source: "Public specifications; some figures (often price) are ballpark",
+    lastVerified: "2026-01",
     specs: [
       { label: "Max Resolution", value: "4K @ 60Hz" },
       { label: "Direction", value: "USB-C (source) → HDMI (display)" },
