@@ -47,3 +47,4 @@ __pycache__/
 # local test scripts
 .check*.mjs
 .shot*.mjs
+.review*.mjs
