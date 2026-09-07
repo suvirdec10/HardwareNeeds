@@ -3,13 +3,15 @@
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { categories } from "@/lib/data/categories";
 import { productsByCategory } from "@/lib/data/products";
 import { explainSpec } from "@/lib/data/spec-explanations";
 import { compareCallouts } from "@/lib/data/compare-insights";
+import { useSetAiContext, useAiUi } from "@/lib/ai/ui-context";
 import { Select } from "@/components/ui/select";
 import { Eyebrow, Tag } from "@/components/ui/tag";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const compareCategories = categories.filter((c) => productsByCategory(c.id).length >= 2);
@@ -36,6 +38,13 @@ export function CompareExperience() {
   const productA = products.find((p) => p.id === productAId) ?? products[0];
   const productB = products.find((p) => p.id === productBId) ?? products[1] ?? products[0];
   const category = compareCategories.find((c) => c.id === categoryId);
+
+  const { setOpen: setAiOpen } = useAiUi();
+  useSetAiContext(
+    category && productA && productB
+      ? { kind: "compare", categoryId: category.id, productA, productB }
+      : { kind: "general" },
+  );
 
   if (!category || !productA || !productB) {
     return (
@@ -122,11 +131,16 @@ export function CompareExperience() {
           </div>
         </div>
 
-        {callouts.length > 0 && (
-          <div key={`callouts-${productA.id}-${productB.id}`} className="mt-10 animate-fade-in-fast">
+        <div key={`callouts-${productA.id}-${productB.id}`} className="mt-10 animate-fade-in-fast">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint">
               Quick take
             </span>
+            <Button variant="secondary" size="sm" onClick={() => setAiOpen(true)}>
+              <Sparkles className="h-3.5 w-3.5" /> Ask AI about this comparison
+            </Button>
+          </div>
+          {callouts.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
               {callouts.map((c, i) => {
                 const winner = c.winner === "a" ? productA : productB;
@@ -141,8 +155,8 @@ export function CompareExperience() {
                 );
               })}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className="mt-10">
           <div className="grid grid-cols-[1.3fr_1fr_1fr] gap-3 px-1 pb-3 font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint sm:gap-4">

@@ -7,6 +7,8 @@ const steps = [
   { label: "Compatibility", detail: "What fits together, and why." },
   { label: "Recommendation", detail: "A specific, reasoned answer." },
   { label: "Understanding", detail: "Why it's right — and how it works." },
+  { label: "AI", detail: "Ask it to adjust, compare, or explain." },
+  { label: "Buy", detail: "Reputable places to actually get it." },
 ];
 
 export function ConceptSection() {
@@ -30,7 +32,7 @@ export function ConceptSection() {
           {/* Desktop: a single connected horizontal flow */}
           <div className="relative hidden lg:block">
             <div className="absolute left-0 right-0 top-[13px] h-px bg-border-strong" aria-hidden />
-            <div className="grid grid-cols-5">
+            <div className="grid grid-cols-7">
               {steps.map((step, i) => (
                 <Reveal key={step.label} delay={i * 90} className="relative pr-8 last:pr-0">
                   <div className="flex items-center gap-3">

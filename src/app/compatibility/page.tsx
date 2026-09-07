@@ -4,6 +4,7 @@ import { ArrowRight, AlertOctagon, Ruler, Gauge } from "lucide-react";
 import { compatibilityLinks } from "@/lib/data/compatibility";
 import { LinkRow } from "@/components/compatibility/link-row";
 import { SystemDiagram } from "@/components/compatibility/system-diagram";
+import { AiPairingChecker } from "@/components/compatibility/ai-pairing-checker";
 import { Eyebrow } from "@/components/ui/tag";
 
 export const metadata: Metadata = {
@@ -56,6 +57,10 @@ export default function CompatibilityPage() {
         <div className="mt-6">
           <SystemDiagram />
         </div>
+      </div>
+
+      <div className="mt-14">
+        <AiPairingChecker />
       </div>
 
       <div className="mt-16 space-y-16">

@@ -12,6 +12,7 @@ import { Tag } from "@/components/ui/tag";
 import { LinkButton } from "@/components/ui/button";
 import { ProductCard } from "@/components/hardware/product-card";
 import { AskAiAboutProduct } from "@/components/hardware/ask-ai-about-product";
+import { WhereToBuy } from "@/components/hardware/where-to-buy";
 import { Reveal } from "@/components/ui/reveal";
 import { workloadLabel } from "@/lib/utils";
 
@@ -259,6 +260,10 @@ export default async function ProductDetailPage({
           )}
         </Reveal>
       )}
+
+      <Reveal className="mt-16 divider-fade-top pt-12">
+        <WhereToBuy product={product} />
+      </Reveal>
 
       {related.length > 0 && (
         <Reveal className="mt-16 divider-fade-top pt-12">

@@ -7,13 +7,16 @@ import { ArrowLeft, ArrowRight, RotateCcw, Sparkles } from "lucide-react";
 import { getGoal } from "@/lib/data/goals";
 import { getCategory } from "@/lib/data/categories";
 import type { PlanAnswers } from "@/lib/data/types";
+import type { AssistantContext } from "@/lib/ai";
 import { generateRecommendations, buildSystemSummary } from "@/lib/data/recommend";
+import { useAiUi, useSetAiContext } from "@/lib/ai/ui-context";
 import { GoalGrid } from "./goal-grid";
 import { DescribeYourBuild } from "./describe-input";
 import { QuestionStep } from "./question-step";
 import { RecommendationCard } from "./recommendation-card";
 import { SystemSummary } from "./system-summary";
-import { AiAssistantPanel } from "./ai-assistant-panel";
+import { AiSuggestions } from "./ai-suggestions";
+import { FindPartsOnline } from "./find-parts-online";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/tag";
 import { Check } from "lucide-react";
@@ -30,7 +33,7 @@ export function PlanExperience() {
   const [phase, setPhase] = React.useState<Phase>(initialGoal && getGoal(initialGoal) ? "questions" : "goal");
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState<PlanAnswers>({});
-  const [aiOpen, setAiOpen] = React.useState(false);
+  const { setOpen: setAiOpen } = useAiUi();
 
   const goal = goalId ? getGoal(goalId) : null;
   const question = goal?.questions[step];
@@ -87,6 +90,10 @@ export function PlanExperience() {
     if (recommendations.length === 0 || !goal) return undefined;
     return buildSystemSummary(goal, recommendations);
   }, [goal, recommendations]);
+
+  const aiContext: AssistantContext =
+    phase === "results" && goalId ? { kind: "plan", goalId, answers, recommendations } : { kind: "general" };
+  useSetAiContext(aiContext, (_recs, newAnswers) => setAnswers(newAnswers));
 
   return (
     <div className="container-page py-32 md:py-40">
@@ -253,6 +260,17 @@ export function PlanExperience() {
             </div>
           )}
 
+          {goal && recommendations.length > 0 && (
+            <AiSuggestions
+              goal={goal}
+              answers={answers}
+              recommendations={recommendations}
+              onAskFollowUp={() => setAiOpen(true)}
+            />
+          )}
+
+          {recommendations.length > 0 && <FindPartsOnline recommendations={recommendations} />}
+
           <div className="mt-12 flex flex-col items-center gap-3 rounded-xl border border-border bg-canvas-raised p-8 text-center">
             <p className="text-text-muted">Want to see how these pieces fit together?</p>
             <Link
@@ -263,17 +281,6 @@ export function PlanExperience() {
             </Link>
           </div>
         </div>
-      )}
-
-      {goalId && (
-        <AiAssistantPanel
-          open={aiOpen}
-          onOpenChange={setAiOpen}
-          goalId={goalId}
-          answers={answers}
-          recommendations={recommendations}
-          onUpdate={(_recs, newAnswers) => setAnswers(newAnswers)}
-        />
       )}
     </div>
   );

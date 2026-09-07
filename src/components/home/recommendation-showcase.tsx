@@ -12,7 +12,7 @@ const reasons = [
 ];
 
 export function RecommendationSection() {
-  const product = getProduct("raster-x6-12g");
+  const product = getProduct("nvidia-rtx-4070-super");
   if (!product) return null;
 
   return (
@@ -78,7 +78,7 @@ export function RecommendationSection() {
             </div>
             <div className="mt-8 flex items-center justify-between divider-fade-top pt-6">
               <span className="font-mono text-2xl text-text">${product.priceUSD.toLocaleString("en-US")}</span>
-              <LinkButton href="/hardware/gpu" variant="secondary" size="sm">
+              <LinkButton href="/compare?category=gpu" variant="secondary" size="sm">
                 Compare GPUs
               </LinkButton>
             </div>

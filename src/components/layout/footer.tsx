@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { categoriesByGroup } from "@/lib/data/categories";
+import { LogoMarkTile } from "@/components/brand/logo";
 
 const productLinks = [
   { href: "/plan", label: "Plan Your Hardware" },
@@ -24,10 +25,8 @@ export function Footer() {
     <footer className="divider-fade-top">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_1fr_1fr_1fr] md:py-20">
         <div>
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-border-strong bg-surface">
-              <span className="h-2 w-2 rounded-sm bg-accent" />
-            </span>
+          <Link href="/" className="group flex items-center gap-2.5">
+            <LogoMarkTile size="h-7 w-7" />
             <span className="text-[15px] font-semibold tracking-[-0.01em] text-text">HardwareNeeds</span>
           </Link>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-text-muted">

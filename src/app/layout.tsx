@@ -3,6 +3,8 @@ import { inter, mono } from "@/lib/fonts";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AiUiProvider } from "@/lib/ai/ui-context";
+import { AiChatPanel, AiFloatingTrigger } from "@/components/ai/ai-chat-panel";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,11 +27,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <TooltipProvider>
-          <Navbar />
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <AiUiProvider>
+            <Navbar />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <AiFloatingTrigger />
+            <AiChatPanel />
+          </AiUiProvider>
         </TooltipProvider>
       </body>
     </html>

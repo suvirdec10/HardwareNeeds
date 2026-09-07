@@ -2,20 +2,22 @@ import type { HardwareProduct, PlanAnswers, Recommendation } from "@/lib/data/ty
 
 /**
  * HardwareNeeds' AI layer is an *intelligence/explanation layer over the
- * real catalog + recommendation engine* — it interprets requests and
- * explains results, but it never invents hardware. Every product any
- * provider implementation returns must come from `src/lib/data/products.ts`
- * via the existing recommendation/compatibility functions.
+ * real catalog + recommendation + compatibility engines* — it interprets
+ * requests and explains results, but it never invents hardware. Whatever
+ * answers a question, the specs/prices/compatibility facts it's grounded in
+ * always come from `src/lib/data/*`.
  *
- * There is currently no LLM API key configured in this environment, so the
- * only implementation is `HeuristicAiProvider` (deterministic keyword/rule
- * matching — see heuristic-provider.ts). It is NOT a language model and
- * does not pretend to be one. This interface exists so a real provider
- * (backed by an actual model) can be dropped in later — see index.ts —
- * without touching any UI code, which only ever talks to `AiProvider`.
+ * There are two possible answer sources, and the UI must always be honest
+ * about which one produced a given message:
+ *  - LIVE mode: a real model call (see src/app/api/ai/assistant/route.ts and
+ *    src/lib/ai/server/openai.ts), used only when OPENAI_API_KEY is set.
+ *  - FALLBACK mode: deterministic, rule-based matching over the same
+ *    catalog data (src/lib/ai/deterministic.ts) — no model call at all.
+ * Every AssistantResponse below carries a `mode` field for exactly this
+ * reason. Nothing in this app should ever claim "live" when it isn't.
  */
 
-/** What the interpreter extracted from a free-text request. */
+/** What the interpreter extracted from a free-text request. Local/instant — no network call. */
 export interface WorkloadProfile {
   /** Best-guess matching Goal id from src/lib/data/goals.ts, if any. */
   goalId?: string;
@@ -34,31 +36,39 @@ export interface AiMessage {
   content: string;
 }
 
-export interface FollowUpContext {
-  goalId: string;
-  answers: PlanAnswers;
-  recommendations: Recommendation[];
-}
+/**
+ * What the assistant currently knows about, driven by whatever page/section
+ * the user is on. This is the "retrieve relevant catalog entries" step of
+ * the pipeline — everything the AI is allowed to reason over is named here,
+ * not left to general knowledge.
+ */
+export type AssistantContext =
+  | { kind: "general" }
+  | { kind: "plan"; goalId: string; answers: PlanAnswers; recommendations: Recommendation[] }
+  | { kind: "product"; product: HardwareProduct }
+  | { kind: "compare"; categoryId: string; productA: HardwareProduct; productB: HardwareProduct }
+  | {
+      kind: "compatibility";
+      categoryAId: string;
+      categoryBId: string;
+      productA?: HardwareProduct;
+      productB?: HardwareProduct;
+    };
 
-export interface AiFollowUpResponse {
+export interface AssistantResponse {
   message: string;
-  /** Present when the follow-up produced a revised build — always real catalog products. */
+  /** Which answer source actually produced `message` — never fabricated. */
+  mode: "live" | "fallback";
+  /** Present when the question produced a revised build — always real catalog products. */
   updatedRecommendations?: Recommendation[];
-  /** Present when the follow-up produced revised answers (e.g. a budget change) worth remembering. */
+  /** Present when the question produced revised answers (e.g. a budget change) worth remembering. */
   updatedAnswers?: PlanAnswers;
 }
 
-export interface AiProvider {
-  readonly id: string;
-  readonly label: string;
-  /** False for rule-based providers — lets the UI be honest about what's answering, if it ever needs to be. */
-  readonly isGenerativeModel: boolean;
+/** The single client-side entry point every AI-touching component uses. */
+export interface AiClient {
+  /** Local keyword matching, no network — used for the Plan quick-start box. */
   interpretRequest(text: string): WorkloadProfile;
-  answerFollowUp(
-    context: FollowUpContext,
-    question: string,
-    history: AiMessage[],
-  ): Promise<AiFollowUpResponse>;
-  /** Answers a free-text question about one specific catalog product — grounded in its real specs/catalog neighbors, never invented. */
-  answerAboutProduct(product: HardwareProduct, question: string): Promise<string>;
+  /** Routes through /api/ai/assistant, which decides live vs. fallback server-side. */
+  ask(context: AssistantContext, question: string, history: AiMessage[]): Promise<AssistantResponse>;
 }

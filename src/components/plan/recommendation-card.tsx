@@ -1,10 +1,14 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, Check, GitCompareArrows } from "lucide-react";
+import { ArrowRight, Check, GitCompareArrows, ShoppingBag } from "lucide-react";
 import type { Recommendation } from "@/lib/data/types";
 import { getCategory } from "@/lib/data/categories";
 import { linksFor } from "@/lib/data/compatibility";
 import { Tag } from "@/components/ui/tag";
 import { Card } from "@/components/ui/card";
+import { WhereToBuy } from "@/components/hardware/where-to-buy";
 
 const kindTone = {
   critical: "danger",
@@ -26,6 +30,7 @@ const scoreLabels: Record<string, string> = {
 };
 
 export function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
+  const [buyOpen, setBuyOpen] = React.useState(false);
   const category = getCategory(recommendation.categoryId);
   const links = linksFor(recommendation.categoryId).filter(
     (l) => l.from === recommendation.categoryId,
@@ -149,8 +154,8 @@ export function RecommendationCard({ recommendation }: { recommendation: Recomme
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 divider-fade-top bg-canvas-raised px-6 py-5 sm:px-8">
-        <div className="flex flex-wrap gap-3">
+      <div className="divider-fade-top bg-canvas-raised px-6 py-5 sm:px-8">
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             href={`/hardware/${category.slug}/${recommendation.product.slug}`}
             className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent-strong hover:text-accent"
@@ -171,7 +176,19 @@ export function RecommendationCard({ recommendation }: { recommendation: Recomme
           >
             Compare options
           </Link>
+          <span className="text-border-strong">·</span>
+          <button
+            onClick={() => setBuyOpen((v) => !v)}
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-text-muted hover:text-text"
+          >
+            <ShoppingBag className="h-3.5 w-3.5" /> Where to buy
+          </button>
         </div>
+        {buyOpen && (
+          <div className="mt-5 animate-fade-up border-t border-border-faint pt-5">
+            <WhereToBuy product={recommendation.product} compact />
+          </div>
+        )}
       </div>
     </Card>
   );

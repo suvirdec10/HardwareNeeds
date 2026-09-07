@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinkButton } from "@/components/ui/button";
+import { LogoMarkTile } from "@/components/brand/logo";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -43,10 +44,8 @@ export function Navbar() {
       )}
     >
       <div className="container-page flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md border border-border-strong bg-surface">
-            <span className="h-2 w-2 rounded-sm bg-accent" />
-          </span>
+        <Link href="/" className="group flex items-center gap-2.5">
+          <LogoMarkTile size="h-8 w-8" animate />
           <span className="text-[15px] font-semibold tracking-[-0.01em] text-text">HardwareNeeds</span>
         </Link>
 

@@ -17,14 +17,12 @@ export default function Icon() {
           borderRadius: 7,
         }}
       >
-        <div
-          style={{
-            width: 9,
-            height: 9,
-            borderRadius: 2,
-            background: "#4c8dff",
-          }}
-        />
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M7 6V18" stroke="#f3f4f6" strokeWidth="2" strokeLinecap="round" />
+          <path d="M17 6V18" stroke="#f3f4f6" strokeWidth="2" strokeLinecap="round" />
+          <path d="M7 9.5H11L17 14.5" stroke="#4c8dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="11" cy="9.5" r="1.3" fill="#4c8dff" />
+        </svg>
       </div>
     ),
     size,
