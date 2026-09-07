@@ -63,7 +63,10 @@ export function Navbar() {
               >
                 {item.label}
                 {active && (
-                  <span className="absolute -bottom-[21px] left-0 right-0 h-px bg-accent" aria-hidden />
+                  <span
+                    className="absolute -bottom-[21px] left-0 right-0 h-px origin-left animate-fade-in-fast bg-accent"
+                    aria-hidden
+                  />
                 )}
               </Link>
             );
@@ -77,12 +80,17 @@ export function Navbar() {
         </div>
 
         <button
-          className="flex h-11 w-11 items-center justify-center rounded-md border border-border text-text lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-md border border-border text-text transition-colors hover:border-border-strong lg:hidden"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
         >
-          {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          <span
+            className="grid transition-transform duration-300"
+            style={{ transform: mobileOpen ? "rotate(90deg)" : "rotate(0deg)" }}
+          >
+            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </span>
         </button>
       </div>
 

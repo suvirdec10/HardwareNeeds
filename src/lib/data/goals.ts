@@ -344,6 +344,39 @@ export const goals: Goal[] = [
     ],
   },
   {
+    id: "ai-ml",
+    label: "AI & Machine Learning",
+    icon: "Sparkles",
+    description: "Local LLM inference, fine-tuning, and machine learning experimentation.",
+    focusCategories: ["gpu", "cpu", "ram", "storage", "psu", "case", "cooler"],
+    questions: [
+      {
+        id: "aiUse",
+        prompt: "What are you mainly doing?",
+        type: "multi",
+        options: [
+          { value: "inference", label: "Running existing models locally (LLM inference)", description: "Chatbots, coding assistants, image generation." },
+          { value: "finetuning", label: "Fine-tuning or training smaller models" },
+          { value: "datascience", label: "Data science / general ML experimentation" },
+          { value: "learning", label: "Learning AI/ML fundamentals" },
+        ],
+      },
+      {
+        id: "modelSize",
+        prompt: "How large are the models you want to run?",
+        helper: "This is the single biggest factor in how much VRAM you need.",
+        type: "single",
+        options: [
+          { value: "small", label: "Small (7B parameters and under)", description: "Runs comfortably on 8-12GB VRAM." },
+          { value: "medium", label: "Medium (13B-34B)", description: "Wants 16-24GB VRAM for good performance." },
+          { value: "large", label: "Large (70B+)", description: "Needs 24GB+ VRAM, or multiple GPUs / heavy quantization." },
+        ],
+      },
+      budgetQuestion,
+      existingHardwareQuestion,
+    ],
+  },
+  {
     id: "home-server",
     label: "Home Server",
     icon: "Server",
@@ -358,7 +391,11 @@ export const goals: Goal[] = [
           { value: "media", label: "Media server (Plex/Jellyfin)" },
           { value: "backup", label: "File storage / backup" },
           { value: "self-hosted", label: "Self-hosted apps / containers" },
-          { value: "home-lab", label: "Home lab / virtualization" },
+          { value: "virtualization", label: "Virtualization — multiple VMs" },
+          { value: "web-hosting", label: "Web hosting / small websites" },
+          { value: "database", label: "Databases" },
+          { value: "cybersecurity-lab", label: "Cybersecurity / pentesting lab" },
+          { value: "small-business", label: "Small business server" },
         ],
       },
       {

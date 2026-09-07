@@ -93,7 +93,7 @@ export function CompareExperience() {
 
         <div className="mt-6 grid items-stretch gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-[1fr_auto_1fr]">
           {[productA, productB].map((p, i) => (
-            <div key={p.id + i} className="bg-canvas p-6">
+            <div key={p.id + i} className="animate-fade-in-fast bg-canvas p-6">
               <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">
                 {i === 0 ? "Product A" : "Product B"}
               </span>
@@ -129,12 +129,12 @@ export function CompareExperience() {
               {productB.brand}
             </span>
           </div>
-          <div className="divide-y divide-border-faint rounded-xl border border-border">
+          <div key={`${productA.id}-${productB.id}`} className="animate-fade-in-fast divide-y divide-border-faint rounded-xl border border-border">
             {specRows.map((row) => {
               const explanation = explainSpec(category.id, row.label);
               const differs = row.a !== row.b;
               return (
-                <div key={row.label} className={cn("px-4 py-4 sm:px-5", differs && "bg-accent-dim")}>
+                <div key={row.label} className={cn("px-4 py-4 transition-colors duration-300 sm:px-5", differs && "bg-accent-dim")}>
                   <div className="grid grid-cols-[1.3fr_1fr_1fr] items-center gap-3 sm:gap-4">
                     <div className="flex items-center gap-2 text-[13px] text-text-muted">
                       {differs && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />}

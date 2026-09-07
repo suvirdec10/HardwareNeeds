@@ -18,7 +18,7 @@ const learnLinks = [
 ];
 
 export function Footer() {
-  const groups = Array.from(categoriesByGroup().keys());
+  const groups = Array.from(categoriesByGroup().keys()).slice(0, 6);
 
   return (
     <footer className="divider-fade-top">

@@ -127,10 +127,16 @@ export function HardwareSystem({
   useFrame((state, delta) => {
     if (!rig.current) return;
     const [bx, by] = baseRotation;
-    const targetX = bx - state.pointer.y * 0.09;
-    const targetY = by + state.pointer.x * 0.13;
+    const t = state.clock.elapsedTime;
+    // Slow, tiny idle drift layered under the pointer parallax — keeps the
+    // rig from ever looking perfectly frozen, without reading as "spinning."
+    const idleX = Math.sin(t * 0.35) * 0.012;
+    const idleY = Math.cos(t * 0.27) * 0.016;
+    const targetX = bx - state.pointer.y * 0.09 + idleX;
+    const targetY = by + state.pointer.x * 0.13 + idleY;
     rig.current.rotation.x = THREE.MathUtils.lerp(rig.current.rotation.x, targetX, Math.min(1, delta * 2));
     rig.current.rotation.y = THREE.MathUtils.lerp(rig.current.rotation.y, targetY, Math.min(1, delta * 2));
+    rig.current.position.y = Math.sin(t * 0.5) * 0.012;
   });
 
   const hoveredCategory = hovered ? getCategory(idToCategory(hovered)) : null;

@@ -13,6 +13,7 @@ import { QuestionStep } from "./question-step";
 import { RecommendationCard } from "./recommendation-card";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/tag";
+import { CountUp } from "@/components/ui/count-up";
 import { Check } from "lucide-react";
 
 type Phase = "goal" | "questions" | "loading" | "results";
@@ -206,12 +207,11 @@ export function PlanExperience() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-faint">
                   Estimated total
                 </p>
-                <p className="mt-1.5 font-mono text-3xl text-text">
-                  $
-                  {recommendations
-                    .reduce((sum, r) => sum + r.product.priceUSD, 0)
-                    .toLocaleString("en-US")}
-                </p>
+                <CountUp
+                  value={recommendations.reduce((sum, r) => sum + r.product.priceUSD, 0)}
+                  prefix="$"
+                  className="mt-1.5 block font-mono text-3xl text-text"
+                />
               </div>
               <div className="h-8 w-px bg-border" />
               <p className="max-w-xs text-[13.5px] leading-relaxed text-text-muted">

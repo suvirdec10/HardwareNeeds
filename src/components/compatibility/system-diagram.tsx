@@ -1,3 +1,6 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
 import * as Icons from "lucide-react";
 import { getCategory } from "@/lib/data/categories";
@@ -57,8 +60,27 @@ function pathFor(link: (typeof links)[number]) {
 }
 
 export function SystemDiagram() {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10">
+    <div ref={ref} className="rounded-2xl border border-border bg-surface p-6 sm:p-10">
       <div className="relative mx-auto aspect-[100/78] w-full max-w-3xl">
         <svg
           viewBox="0 0 100 78"
@@ -74,11 +96,11 @@ export function SystemDiagram() {
               strokeWidth={0.35}
               strokeLinecap="round"
               opacity={0.55}
-              className="animate-draw-line"
+              className={visible ? "animate-draw-line" : undefined}
               style={{
                 strokeDasharray: 140,
                 strokeDashoffset: 140,
-                animationDelay: `${120 + i * 90}ms`,
+                animationDelay: visible ? `${120 + i * 90}ms` : undefined,
               }}
             />
           ))}

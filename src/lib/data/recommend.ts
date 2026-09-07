@@ -86,51 +86,105 @@ function categoryOverride(
     }
   }
 
+  if (goalId === "ai-ml") {
+    const modelSize = asString(answers.modelSize);
+    if (["gpu", "ram", "storage"].includes(categoryId)) {
+      if (modelSize === "large") index = Math.max(index, 2);
+      else if (modelSize === "medium") index = Math.max(index, 1);
+    }
+  }
+
   return clampTier(index);
+}
+
+/** Pulls a spec value off a picked product by (partial, case-insensitive) label match. */
+function specValue(product: { specs: { label: string; value: string }[] } | undefined, labelPart: string) {
+  return product?.specs.find((s) => s.label.toLowerCase().includes(labelPart.toLowerCase()))?.value;
 }
 
 function reasoningFor(
   goal: Goal,
   categoryId: string,
   answers: PlanAnswers,
-  picks: Map<string, { name: string }>,
+  picks: Map<string, { name: string; specs: { label: string; value: string }[] }>,
+  product: { name: string; specs: { label: string; value: string }[] },
 ): string[] {
   const reasons: string[] = [];
   const goalLabel = goal.label.toLowerCase();
 
   switch (categoryId) {
     case "gpu": {
-      const res = asString(answers.resolution) || "your target resolution";
-      reasons.push(`You're building for ${goalLabel}, targeting ${res === "your target resolution" ? res : res.toUpperCase()}.`);
-      reasons.push("That resolution and workload set the floor for how much GPU performance and VRAM you actually need.");
-      reasons.push("This GPU comfortably covers that target with room to keep settings high rather than scraping by.");
+      const vram = specValue(product, "vram");
+      if (goal.id === "ai-ml") {
+        const modelSize = asString(answers.modelSize);
+        reasons.push(
+          modelSize
+            ? `You said you're working with ${modelSize === "large" ? "large (70B+)" : modelSize === "medium" ? "medium (13B-34B)" : "small (7B and under)"} models — that's the main driver of how much VRAM matters here.`
+            : "Model size is the main driver of how much VRAM actually matters for local AI work.",
+        );
+        reasons.push(
+          vram
+            ? `${product.name} has ${vram} of VRAM, which sets the ceiling for how large a model you can load without heavy quantization.`
+            : `${product.name} was chosen for its VRAM headroom for local AI workloads.`,
+        );
+      } else {
+        const res = asString(answers.resolution) || "your target resolution";
+        reasons.push(`You're building for ${goalLabel}, targeting ${res === "your target resolution" ? res : res.toUpperCase()}.`);
+        reasons.push("That resolution and workload set the floor for how much GPU performance and VRAM you actually need.");
+        reasons.push(
+          vram
+            ? `${product.name} comfortably covers that target with ${vram} of VRAM — room to keep settings high rather than scraping by.`
+            : `${product.name} comfortably covers that target with room to keep settings high rather than scraping by.`,
+        );
+      }
       break;
     }
     case "cpu": {
+      const cores = specValue(product, "cores");
       reasons.push(`For ${goalLabel}, the CPU needs to keep up with the GPU and any background work without becoming the limiting factor.`);
-      reasons.push("This tier balances single-core speed and core count for what you described.");
+      reasons.push(
+        cores
+          ? `${product.name} (${cores}) balances single-core speed and core count for what you described.`
+          : `This tier balances single-core speed and core count for what you described.`,
+      );
       break;
     }
     case "ram": {
+      const capacity = specValue(product, "capacity");
       reasons.push(`${goal.label} workloads determine how much can comfortably stay in fast memory at once.`);
-      reasons.push("This capacity avoids the system falling back to slow storage swaps during normal use.");
+      reasons.push(
+        capacity
+          ? `${capacity} avoids the system falling back to slow storage swaps during normal use.`
+          : "This capacity avoids the system falling back to slow storage swaps during normal use.",
+      );
       break;
     }
     case "storage": {
-      reasons.push("Capacity and speed are sized to your stated project/library needs, not just the OS.");
+      const capacity = specValue(product, "capacity");
+      reasons.push(
+        capacity
+          ? `${capacity} of capacity is sized to your stated project/library needs, not just the OS.`
+          : "Capacity and speed are sized to your stated project/library needs, not just the OS.",
+      );
       break;
     }
     case "motherboard": {
       const cpu = picks.get("cpu");
-      reasons.push(cpu ? `Matches the socket and chipset needed for ${cpu.name}.` : "Matches the socket and chipset needed for your CPU.");
+      const socket = specValue(cpu, "socket");
+      reasons.push(
+        cpu
+          ? `Matches ${socket ? `the ${socket} socket` : "the socket"} needed for ${cpu.name}.`
+          : "Matches the socket and chipset needed for your CPU.",
+      );
       reasons.push("Supports the RAM type and speed selected above.");
       break;
     }
     case "psu": {
       const gpu = picks.get("gpu");
+      const recPsu = specValue(gpu, "recommended psu");
       reasons.push(
         gpu
-          ? `Sized with headroom above ${gpu.name}'s rated draw, plus the rest of the system.`
+          ? `Sized with headroom above ${gpu.name}'s rated draw${recPsu ? ` (recommends ${recPsu} minimum)` : ""}, plus the rest of the system.`
           : "Sized with headroom above your system's combined power draw.",
       );
       break;
@@ -243,7 +297,7 @@ export function generateRecommendations(goalId: string, answers: PlanAnswers): R
 
   const base = baseTier(answers);
   const results: Recommendation[] = [];
-  const picks = new Map<string, { name: string }>();
+  const picks = new Map<string, { name: string; specs: { label: string; value: string }[] }>();
 
   // Resolve in an order that lets later reasoning reference earlier picks.
   const order = ["cpu", "gpu", "ram", "storage", "motherboard", "cooler", "psu", "case", "monitor"];
@@ -256,7 +310,7 @@ export function generateRecommendations(goalId: string, answers: PlanAnswers): R
     const tier = categoryOverride(goal.id, categoryId, answers, base);
     const product = pickByTier(categoryId, tier);
     if (!product) continue;
-    picks.set(categoryId, { name: product.name });
+    picks.set(categoryId, { name: product.name, specs: product.specs });
 
     const alternatives = productsByCategory(categoryId).filter((p) => p.id !== product.id);
     const alternative =
@@ -266,7 +320,7 @@ export function generateRecommendations(goalId: string, answers: PlanAnswers): R
       categoryId,
       product,
       role: roleLabel(categoryId),
-      reasoning: reasoningFor(goal, categoryId, answers, picks),
+      reasoning: reasoningFor(goal, categoryId, answers, picks, product),
       alternative,
     });
   }

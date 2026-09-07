@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { Eyebrow, Tag } from "@/components/ui/tag";
 import { LinkButton } from "@/components/ui/button";
+import { Reveal } from "@/components/ui/reveal";
 import { getProduct } from "@/lib/data/products";
 
 const reasons = [
@@ -17,18 +18,23 @@ export function RecommendationSection() {
   return (
     <section className="relative divider-fade-top bg-canvas-raised py-28 md:py-40">
       <div className="container-page">
-        <div className="max-w-2xl">
-          <Eyebrow>Recommendations</Eyebrow>
-          <h2 className="mt-5 text-balance text-4xl font-semibold tracking-[-0.02em] text-text sm:text-5xl">
-            Every recommendation has a reason.
-          </h2>
-          <p className="mt-5 max-w-lg text-balance text-lg leading-relaxed text-text-muted">
-            Not &ldquo;buy this because it&apos;s powerful.&rdquo; Here&apos;s the kind of answer
-            you actually get.
-          </p>
-        </div>
+        <Reveal>
+          <div className="max-w-2xl">
+            <Eyebrow>Recommendations</Eyebrow>
+            <h2 className="mt-5 text-balance text-4xl font-semibold tracking-[-0.02em] text-text sm:text-5xl">
+              Every recommendation has a reason.
+            </h2>
+            <p className="mt-5 max-w-lg text-balance text-lg leading-relaxed text-text-muted">
+              Not &ldquo;buy this because it&apos;s powerful.&rdquo; Here&apos;s the kind of answer
+              you actually get.
+            </p>
+          </div>
+        </Reveal>
 
-        <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-[1.2fr_1fr]">
+        <Reveal
+          delay={120}
+          className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-[1.2fr_1fr]"
+        >
           <div className="bg-canvas p-8 sm:p-10">
             <Tag tone="accent">Recommended · GPU</Tag>
             <h3 className="mt-4 text-2xl font-semibold tracking-[-0.01em] text-text sm:text-3xl">
@@ -77,7 +83,7 @@ export function RecommendationSection() {
               </LinkButton>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

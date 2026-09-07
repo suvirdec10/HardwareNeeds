@@ -15,7 +15,7 @@ export const compatibilityLinks: CompatibilityLink[] = [
     kind: "critical",
     label: "Socket must match",
     detail:
-      "A CPU only physically fits motherboards built for its socket (e.g. AM5, LGA1851). This is the first compatibility check in any build.",
+      "A CPU only physically fits motherboards built for its socket (e.g. AM5, LGA1700). This is the first compatibility check in any build. Server CPUs use entirely separate socket families (e.g. AMD SP5, Intel LGA4677) and need a server-specific motherboard — desktop and server platforms are never interchangeable.",
   },
   {
     from: "motherboard",
@@ -109,6 +109,38 @@ export const compatibilityLinks: CompatibilityLink[] = [
     kind: "performance",
     label: "Needs an upstream router",
     detail: "Access points extend coverage but rely on a router (or switch connected to one) to actually reach the internet.",
+  },
+  {
+    from: "ram",
+    to: "motherboard",
+    kind: "critical",
+    label: "ECC support isn't universal",
+    detail:
+      "ECC (error-correcting) memory only works if both the CPU and motherboard explicitly support it. Most consumer gaming boards don't — ECC is mainly a server/workstation feature. Using ECC RAM in a board that doesn't support it usually just makes it run as non-ECC.",
+  },
+  {
+    from: "ram",
+    to: "laptop",
+    kind: "physical",
+    label: "Upgradeability varies by model",
+    detail:
+      "Some laptops have accessible RAM/storage slots you can upgrade later; increasingly, memory is soldered directly to the board and fixed at purchase. Always check a specific model's teardown or spec sheet before assuming it's upgradeable.",
+  },
+  {
+    from: "storage",
+    to: "nas",
+    kind: "physical",
+    label: "Drive size and count must fit the bays",
+    detail:
+      "A NAS's bay count sets the maximum number of drives, and each bay is sized for 3.5\" or 2.5\" drives (sometimes both). Drives are almost always sold separately from the NAS enclosure itself.",
+  },
+  {
+    from: "ram",
+    to: "server",
+    kind: "critical",
+    label: "Server platforms expect ECC RDIMM/UDIMM",
+    detail:
+      "Server motherboards typically require registered (RDIMM) or unbuffered (UDIMM) ECC memory in specific capacities and speeds — standard desktop RAM usually isn't compatible, even if it physically fits the slot.",
   },
 ];
 

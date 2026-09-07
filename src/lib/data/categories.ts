@@ -10,6 +10,7 @@ export const categories: HardwareCategory[] = [
     tagline: "Executes instructions — the general-purpose brain of the system.",
     icon: "Cpu",
     in3DSystem: true,
+    subcategories: ["Desktop CPU", "Server CPU", "Laptop CPU"],
   },
   {
     id: "gpu",
@@ -19,6 +20,7 @@ export const categories: HardwareCategory[] = [
     tagline: "Processes graphics and parallel visual workloads.",
     icon: "MonitorSmartphone",
     in3DSystem: true,
+    subcategories: ["Consumer GPU", "AI / Workstation GPU", "Integrated Graphics"],
   },
   {
     id: "ram",
@@ -28,6 +30,7 @@ export const categories: HardwareCategory[] = [
     tagline: "Short-term memory the CPU/GPU pull active data from.",
     icon: "MemoryStick",
     in3DSystem: true,
+    subcategories: ["Desktop DDR5", "Desktop DDR4", "Server / ECC"],
   },
   {
     id: "storage",
@@ -37,6 +40,17 @@ export const categories: HardwareCategory[] = [
     tagline: "Where your OS, applications, and files live long-term.",
     icon: "HardDrive",
     in3DSystem: true,
+    subcategories: ["NVMe SSD", "SATA SSD", "HDD"],
+  },
+  {
+    id: "ai-accelerator",
+    slug: "ai-accelerator",
+    name: "AI Accelerator",
+    group: "Compute",
+    tagline: "Purpose-built hardware for AI training and inference, distinct from general gaming GPUs.",
+    icon: "Sparkles",
+    in3DSystem: false,
+    subcategories: ["Inference Accelerator", "Training Accelerator", "NPU"],
   },
 
   // System — what holds compute together and keeps it running
@@ -159,6 +173,15 @@ export const categories: HardwareCategory[] = [
     icon: "Gamepad2",
     in3DSystem: false,
   },
+  {
+    id: "docking-station",
+    slug: "docking-station",
+    name: "Docking Station",
+    group: "Display & Input",
+    tagline: "Expands a laptop's ports into a full desktop setup.",
+    icon: "Usb",
+    in3DSystem: false,
+  },
 
   // Networking — getting every device online, reliably
   {
@@ -206,6 +229,141 @@ export const categories: HardwareCategory[] = [
     icon: "RadioTower",
     in3DSystem: false,
   },
+  {
+    id: "network-card",
+    slug: "network-card",
+    name: "Network Card",
+    group: "Networking",
+    tagline: "High-speed wired networking for desktops, workstations, and servers.",
+    icon: "Cable",
+    in3DSystem: false,
+  },
+  {
+    id: "firewall",
+    slug: "firewall",
+    name: "Firewall",
+    group: "Networking",
+    tagline: "Inspects and filters traffic at the edge of a home or business network.",
+    icon: "ShieldCheck",
+    in3DSystem: false,
+  },
+
+  // Complete Systems — whole machines, not individual parts
+  {
+    id: "desktop-pc",
+    slug: "desktop-pc",
+    name: "Desktop PC",
+    group: "Complete Systems",
+    tagline: "A fully assembled tower, built and tested as one unit.",
+    icon: "Box",
+    in3DSystem: false,
+    subcategories: ["Gaming PC", "Everyday Desktop", "Small Form Factor"],
+  },
+  {
+    id: "mini-pc",
+    slug: "mini-pc",
+    name: "Mini PC",
+    group: "Complete Systems",
+    tagline: "A full desktop compressed into a footprint the size of a book.",
+    icon: "Boxes",
+    in3DSystem: false,
+  },
+  {
+    id: "laptop",
+    slug: "laptop",
+    name: "Laptop",
+    group: "Complete Systems",
+    tagline: "A complete, portable system — screen, battery, and input built in.",
+    icon: "Laptop",
+    in3DSystem: false,
+    subcategories: ["Everyday Laptop", "Gaming Laptop", "Workstation Laptop"],
+  },
+  {
+    id: "workstation-pc",
+    slug: "workstation-pc",
+    name: "Workstation",
+    group: "Complete Systems",
+    tagline: "Reliability- and certification-focused hardware for professional technical work.",
+    icon: "Briefcase",
+    in3DSystem: false,
+  },
+  {
+    id: "server",
+    slug: "server",
+    name: "Server",
+    group: "Complete Systems",
+    tagline: "Always-on hardware built for uptime, remote management, and dense workloads.",
+    icon: "Server",
+    in3DSystem: false,
+    subcategories: ["Tower Server", "Rack Server", "GPU / AI Server"],
+  },
+
+  // Storage & Backup — storage that lives outside a single build
+  {
+    id: "nas",
+    slug: "nas",
+    name: "NAS",
+    group: "Storage & Backup",
+    tagline: "Network-attached storage — shared drives accessible to every device on your network.",
+    icon: "HardDrive",
+    in3DSystem: false,
+  },
+  {
+    id: "external-storage",
+    slug: "external-storage",
+    name: "External Storage",
+    group: "Storage & Backup",
+    tagline: "Portable or backup storage outside your main system.",
+    icon: "HardDriveDownload",
+    in3DSystem: false,
+  },
+  {
+    id: "enterprise-storage",
+    slug: "enterprise-storage",
+    name: "Enterprise Storage",
+    group: "Storage & Backup",
+    tagline: "Direct-attached and array storage built for business and data-center use.",
+    icon: "Database",
+    in3DSystem: false,
+  },
+
+  // Developer & Maker — boards and small hardware for building things
+  {
+    id: "single-board-computer",
+    slug: "single-board-computer",
+    name: "Single-Board Computer",
+    group: "Developer & Maker",
+    tagline: "A complete, credit-card-sized computer on one board — the Raspberry Pi and its peers.",
+    icon: "CircuitBoard",
+    in3DSystem: false,
+  },
+  {
+    id: "microcontroller",
+    slug: "microcontroller",
+    name: "Microcontroller / Dev Board",
+    group: "Developer & Maker",
+    tagline: "Small, focused boards for embedded projects — not a general-purpose computer.",
+    icon: "Cpu",
+    in3DSystem: false,
+  },
+  {
+    id: "edge-ai-device",
+    slug: "edge-ai-device",
+    name: "Edge AI Device",
+    group: "Developer & Maker",
+    tagline: "Compact hardware built to run AI models locally, close to where data is captured.",
+    icon: "Zap",
+    in3DSystem: false,
+  },
+  {
+    id: "fpga-board",
+    slug: "fpga-board",
+    name: "FPGA Board",
+    group: "Developer & Maker",
+    tagline: "Reconfigurable hardware logic — programmed at the circuit level rather than in software.",
+    icon: "CircuitBoard",
+    in3DSystem: false,
+  },
 
   // Other
   {
@@ -215,24 +373,6 @@ export const categories: HardwareCategory[] = [
     group: "Other",
     tagline: "Captures video from an external source for streaming/recording.",
     icon: "Clapperboard",
-    in3DSystem: false,
-  },
-  {
-    id: "external-storage",
-    slug: "external-storage",
-    name: "External Storage",
-    group: "Other",
-    tagline: "Portable or backup storage outside your main system.",
-    icon: "HardDriveDownload",
-    in3DSystem: false,
-  },
-  {
-    id: "docking-station",
-    slug: "docking-station",
-    name: "Docking Station",
-    group: "Other",
-    tagline: "Expands a laptop's ports into a full desktop setup.",
-    icon: "Usb",
     in3DSystem: false,
   },
   {
@@ -264,16 +404,30 @@ export const categories: HardwareCategory[] = [
   },
 ];
 
+/** Canonical display order for directory sections, the footer, etc. */
+export const categoryGroupOrder: HardwareCategory["group"][] = [
+  "Compute",
+  "System",
+  "Complete Systems",
+  "Storage & Backup",
+  "Display & Input",
+  "Networking",
+  "Developer & Maker",
+  "Other",
+];
+
 export function getCategory(idOrSlug: string) {
   return categories.find((c) => c.id === idOrSlug || c.slug === idOrSlug);
 }
 
 export function categoriesByGroup() {
   const groups = new Map<string, HardwareCategory[]>();
+  for (const group of categoryGroupOrder) groups.set(group, []);
   for (const c of categories) {
     const list = groups.get(c.group) ?? [];
     list.push(c);
     groups.set(c.group, list);
   }
+  for (const [key, list] of groups) if (list.length === 0) groups.delete(key);
   return groups;
 }
