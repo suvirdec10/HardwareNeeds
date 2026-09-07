@@ -41,7 +41,7 @@ export function QuestionStep({
               <Slider.Range className="absolute h-full rounded-full bg-accent" />
             </Slider.Track>
             <Slider.Thumb
-              className="block h-5 w-5 rounded-full border-2 border-accent bg-canvas-raised shadow-lg transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+              className="block h-6 w-6 rounded-full border-2 border-accent bg-canvas-raised shadow-lg transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
               aria-label={question.prompt}
             />
           </Slider.Root>

@@ -25,12 +25,12 @@ export function CompareExperience() {
   const [productAId, setProductAId] = React.useState(products[0]?.id);
   const [productBId, setProductBId] = React.useState(products[1]?.id ?? products[0]?.id);
 
-  React.useEffect(() => {
-    const list = productsByCategory(categoryId ?? "");
-    setProductAId(list[0]?.id);
-    setProductBId(list[1]?.id ?? list[0]?.id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryId]);
+  const [prevCategoryId, setPrevCategoryId] = React.useState(categoryId);
+  if (categoryId !== prevCategoryId) {
+    setPrevCategoryId(categoryId);
+    setProductAId(products[0]?.id);
+    setProductBId(products[1]?.id ?? products[0]?.id);
+  }
 
   const productA = products.find((p) => p.id === productAId) ?? products[0];
   const productB = products.find((p) => p.id === productBId) ?? products[1] ?? products[0];
@@ -104,15 +104,15 @@ export function CompareExperience() {
         </div>
 
         <div className="mt-10 overflow-hidden rounded-xl border border-border">
-          <div className="grid grid-cols-[1.4fr_1fr_1fr] gap-4 border-b border-border bg-canvas-raised px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint">
+          <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-3 border-b border-border bg-canvas-raised px-4 py-3.5 font-mono text-[11px] uppercase tracking-[0.08em] text-text-faint sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-4 sm:px-5">
             <span>Spec</span>
-            <span>{productA.brand} {productA.name}</span>
-            <span>{productB.brand} {productB.name}</span>
+            <span className="truncate" title={`${productA.brand} ${productA.name}`}>A</span>
+            <span className="truncate" title={`${productB.brand} ${productB.name}`}>B</span>
           </div>
           {specRows.map((row) => (
             <div
               key={row.label}
-              className="grid grid-cols-[1.4fr_1fr_1fr] gap-4 border-b border-border bg-surface px-5 py-4 last:border-b-0"
+              className="grid grid-cols-[1.2fr_1fr_1fr] gap-3 border-b border-border bg-surface px-4 py-4 last:border-b-0 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-4 sm:px-5"
             >
               <div className="flex items-center gap-1.5 text-[13px] text-text-muted">
                 {row.label}

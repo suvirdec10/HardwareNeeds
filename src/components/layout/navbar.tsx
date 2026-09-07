@@ -21,16 +21,18 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const pathname = usePathname();
 
+  const [prevPathname, setPrevPathname] = React.useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMobileOpen(false);
+  }
+
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  React.useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
 
   return (
     <header
@@ -75,7 +77,7 @@ export function Navbar() {
         </div>
 
         <button
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-text md:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-md border border-border text-text md:hidden"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}

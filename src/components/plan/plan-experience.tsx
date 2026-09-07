@@ -30,21 +30,14 @@ export function PlanExperience() {
   const goal = goalId ? getGoal(goalId) : null;
   const question = goal?.questions[step];
 
-  React.useEffect(() => {
-    if (question?.type === "slider" && answers[question.id] === undefined) {
-      const fallback = question.defaultValue ?? question.min ?? 0;
-      setAnswers((a) => ({ ...a, [question.id]: fallback }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [question]);
-
-  const isAnswered = React.useMemo(() => {
+  // Sliders always render a value (their own default), so they never block progress.
+  const isAnswered = (() => {
     if (!question) return false;
+    if (question.type === "slider") return true;
     const value = answers[question.id];
-    if (question.type === "slider") return typeof value === "number";
     if (question.type === "multi") return Array.isArray(value) && value.length > 0;
     return typeof value === "string" && value.length > 0;
-  }, [question, answers]);
+  })();
 
   function selectGoal(id: string) {
     setGoalId(id);

@@ -60,7 +60,7 @@ export default async function LearnTopicPage({ params }: { params: Promise<{ slu
           <div className="container-page py-20">
             <Eyebrow>How it works</Eyebrow>
             <h2 className="mt-3 text-2xl font-semibold tracking-[-0.01em] text-text">
-              Scroll to see what&apos;s actually inside.
+              What&apos;s actually inside.
             </h2>
           </div>
           <CpuScrollDemo />

@@ -18,9 +18,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-canvas text-text">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-[#04070d]"
+        >
+          Skip to content
+        </a>
         <TooltipProvider>
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
           <Footer />
         </TooltipProvider>
       </body>

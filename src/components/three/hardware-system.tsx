@@ -226,7 +226,7 @@ function ConnectionLine({ entry, explode }: { entry: LayoutEntry; explode: numbe
   return (
     <line>
       <bufferGeometry ref={geometryRef}>
-        <bufferAttribute attach="attributes-position" count={2} array={new Float32Array(6)} itemSize={3} />
+        <bufferAttribute attach="attributes-position" args={[new Float32Array(6), 3]} />
       </bufferGeometry>
       <lineBasicMaterial ref={materialRef} color={ACCENT} transparent opacity={0.1} />
     </line>

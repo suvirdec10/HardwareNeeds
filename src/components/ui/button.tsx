@@ -27,7 +27,7 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center rounded-md font-medium tracking-[-0.01em] transition-all duration-200 ease-out cursor-pointer select-none disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98] whitespace-nowrap";
+  "inline-flex items-center justify-center rounded-md font-medium tracking-[-0.01em] transition-all duration-200 ease-out cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98] whitespace-nowrap";
 
 export function Button({
   variant = "primary",

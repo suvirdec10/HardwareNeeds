@@ -124,7 +124,7 @@ export function UpgradeExperience() {
                       key={opt.value}
                       onClick={() => setCurrent((c) => ({ ...c, [categoryId]: opt.value }))}
                       className={cn(
-                        "rounded-md border px-3 py-1.5 text-[12.5px] font-medium transition-colors",
+                        "min-h-[38px] rounded-md border px-3.5 py-2 text-[12.5px] font-medium transition-colors",
                         value === opt.value
                           ? "border-accent-border bg-accent-dim text-accent-strong"
                           : "border-border bg-canvas text-text-muted hover:border-border-strong hover:text-text",
